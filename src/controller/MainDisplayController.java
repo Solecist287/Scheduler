@@ -48,6 +48,8 @@ public class MainDisplayController {
 	private CalendarModel cmodel;
 	private List <Event> events;
 	@FXML
+	BorderPane mainDisplay;
+	@FXML
 	ScrollPane timetableDisplay;
 	@FXML
 	VBox calendarView;
@@ -60,20 +62,22 @@ public class MainDisplayController {
 	
 	//all the timetable views
 	GridPane dayTimetable, weekTimetable, monthTimetable, yearTimetable;
-	
-	DatePickerSkin datePickerDisplay;
-	
+	GridPane dayHourlyLabelGrid, weekHourlyLabelGrid;
 	
 	private Stage primaryStage;
 	
 	private DatePicker datePicker;
 	private DatePickerSkin datePickerSkin;
 	private Node datePickerSkinPopupContent;
-	private TemporalField USDayOfWeekTemporalField;
+	private DatePickerSkin datePickerDisplay;//pointless?
+	
+	private HBox dayView, weekView;
+	
+	private TemporalField USDayOfWeekTemporalField;//later be a general setting
 	
 	private final int timeIncrement = 5;
+	private final int timeLabelWidth = 35;
 	//make divisible by 4 and 7 for months and week respectively
-	//private final int timetableWidth = 560;
 	private final int timetableWidth = 700;
 	public void start(Stage primaryStage, CalendarModel cmodel) {
 		this.primaryStage = primaryStage;
@@ -81,11 +85,8 @@ public class MainDisplayController {
 		this.cmodel = cmodel;
 		//retrieve events list from database
 		events = cmodel.getEvents();
-		//create timetables like dimensions, cells, etc
-		dayTimetable = createTimetable("Day");
-		weekTimetable = createTimetable("Week");
-		monthTimetable = createTimetable("Month");
-		yearTimetable = createTimetable("Year");
+		//timetableDisplay width
+		timetableDisplay.setMinWidth(timetableWidth + timeLabelWidth + 20);
 		//set temporal field in order to know "beginning" of week like sunday,monday,etc.
 		USDayOfWeekTemporalField = WeekFields.of(Locale.US).dayOfWeek();
 		//get current date to initialize everything
@@ -103,6 +104,11 @@ public class MainDisplayController {
 		datePickerSkinPopupContent.setStyle("-fx-border-color: black;");
 		//add calendar display to left side of screen
 		calendarView.getChildren().add(0,datePickerSkinPopupContent);
+		//create timetables like dimensions, cells, etc
+				dayTimetable = createDayTimetable(1);
+				weekTimetable = createDayTimetable(7);
+				monthTimetable = null;
+				yearTimetable = null;
 		//add listener to timeUnitComboBox
 		timeUnitComboBox.getSelectionModel().selectedItemProperty().addListener((selected,oldval,newval)->{
 			//add hover text for left and right arrow buttons
@@ -116,6 +122,7 @@ public class MainDisplayController {
 	}
 	public void stop() {}
 	
+	//observable list would handle updating the timetable current view
 	@FXML
 	public void addEventPopup() throws IOException {
 		//create popup stage
@@ -145,8 +152,10 @@ public class MainDisplayController {
 		//change calendarview which changes label
 		datePicker.setValue(currentDate);
 		//change scheduleview
+		updateTimetable();
 	}
 	
+	//done?
 	@FXML
 	public void setToPrevTimeUnit() {
 		//update calendar, label, schedule...label is affected when calendar or dropdown is changed 
@@ -167,7 +176,7 @@ public class MainDisplayController {
 				break;
 		}
 	}
-	
+	//done?
 	@FXML
 	public void setToNextTimeUnit() {
 		//update calendar, label, schedule...label is affected when calendar or dropdown is changed 
@@ -189,6 +198,7 @@ public class MainDisplayController {
 		}
 	}
 	
+	//hard?
 	private void updateTimetable() {
 		String currentTimeUnit = timeUnitComboBox.getSelectionModel().getSelectedItem();
 		GridPane timetable = null;
@@ -210,78 +220,111 @@ public class MainDisplayController {
 			timetable = yearTimetable;
 			break;
 		}
-		
 		//find a way to clear events...maybe recreate table...?
 	}
 	
-	private GridPane createTimetable(String timeUnit) {
+	private GridPane createDayTimetable(int dayNum) {
 		//init to zero first
-		int rowSize = 0; 
-		int colSize = 0;
-		int rowNum = 0;
-		int colNum = 0;
+		int rowSize = timeIncrement; 
+		int colSize = timetableWidth/dayNum;
+		int rowNum = (24*60)/timeIncrement;//5 min intervals;
+		int colNum = dayNum + 1;//first is time label column
 		GridPane timetable = new GridPane();
-		//determine dimensions of grid
-		switch(timeUnit) {
-		case "Day":
-			rowNum = (24*60)/timeIncrement;//5 min intervals
-			colNum = 1;//one day to show
-			rowSize = 5;
-			colSize = timetableWidth;
-			break;
-		case "Week":
-			rowNum = (24*60)/timeIncrement;//5 min intervals
-			colNum = 7;//7 days a week, one day per column
-			rowSize = 5;
-			colSize = (timetableWidth)/7;//divide into 7ths..."minus 6" keeps same size timetable when using hgap for cols
-			break;
-		case "Month"://not sure yet
-			break;
-		case "Year"://not sure yet
-			break;
-		}
 		//set column and row constraints
 		for (int i = 0; i < colNum; i++) {
-			ColumnConstraints cc = new ColumnConstraints(colSize);
+			ColumnConstraints cc;
+			if (i == 0) {//time label
+				cc = new ColumnConstraints(timeLabelWidth);
+			}else {
+				cc = new ColumnConstraints(colSize);
+			}
 			cc.setHgrow(Priority.NEVER);
 			timetable.getColumnConstraints().add(cc);
 		}
 		for (int i = 0; i < rowNum; i++) {
 			RowConstraints rc = new RowConstraints(rowSize);
+			rc.setVgrow(Priority.NEVER);
 			timetable.getRowConstraints().add(rc);
 		}
-		//draw timetable
+		LocalDate currentDate = datePicker.getValue();
+		for (int i = 1; i <= 7; i++) {
+			LocalDate localDate = currentDate.with(USDayOfWeekTemporalField,i);
+			String day = localDate.getDayOfWeek().toString().substring(0,3).toLowerCase();
+			System.out.println("date: " + localDate + " day: " + day + " i: " + i);
+		}
+		//draw and set initial values for timetable
 		for (int i = 0; i < colNum; i++) {
 			for (int j = 0; j < rowNum; j++) {
 				Pane p = new Pane();
-				if (j%12==0) {//start of hour, show only top of cell
-					p.setStyle("-fx-background-color: white;" +
-							"-fx-border-width: 1 1 0 1;" +
-							"-fx-border-color: black black black black");
+				p.setPrefWidth(colSize);
+				p.setPrefHeight(rowSize);
+				if (i==0) {//prioritize labeling time for first column
+					if (j == rowNum-1) {//show bottom border if last row
+						p.getChildren().add(new Label("11pm"));
+						p.setStyle("-fx-background-color: white;" +
+								"-fx-border-width: 0 0 1 0;" +
+								"-fx-border-color: black black black black");
+						timetable.add(p, i, j);
+					}else if (j%12==0){//show only top border otherwise
+						String period = (j/12)<12 ? "am" : "pm";
+						int hour = ((j/12)%12==0) ? 12 : (j/12)%12;//do NOT change!!! 
+						p.getChildren().add(new Label(hour + period));
+						p.setStyle("-fx-background-color: white;" +
+								"-fx-border-width: 1 0 0 0;" +
+								"-fx-border-color: black black black black");
+						timetable.add(p, i, j);
+					}
+				}else if (j%12==0) {//start of hour, show only top of cell
+					if (i==colNum-1) {
+						p.setStyle("-fx-background-color: white;" +
+								"-fx-border-width: 1 1 0 1;" +
+								"-fx-border-color: black black black black");
+					}else {
+						p.setStyle("-fx-background-color: white;" +
+								"-fx-border-width: 1 0 0 1;" +
+								"-fx-border-color: black black black black");
+					}
+					timetable.add(p, i, j);
 				}else if (j == rowNum - 1){//last row of cell
-					p.setStyle("-fx-background-color: white;" +
-							"-fx-border-width: 0 1 1 1;" +
-							"-fx-border-color: black black black black");
+					if (i==colNum-1) {
+						p.setStyle("-fx-background-color: white;" +
+								"-fx-border-width: 0 1 1 1;" +
+								"-fx-border-color: black black black black");
+					}else {
+						p.setStyle("-fx-background-color: white;" +
+								"-fx-border-width: 0 0 1 1;" +
+								"-fx-border-color: black black black black");
+					}
+					
+					timetable.add(p, i, j);
 				}else {//just draw left and right lines of cell
-					p.setStyle("-fx-background-color: white;" +
-							"-fx-border-width: 0 1 0 1;" +
-							"-fx-border-color: black black black black");
+					if (i==colNum-1) {
+						p.setStyle("-fx-background-color: white;" +
+								"-fx-border-width: 0 1 0 1;" +
+								"-fx-border-color: black black black black");
+					}else {
+						p.setStyle("-fx-background-color: white;" +
+								"-fx-border-width: 0 0 0 1;" +
+								"-fx-border-color: black black black black");
+					}
+					timetable.add(p, i, j);
 				}
-				timetable.add(p, i, j, 1, 1);
 			}
 		}
+		
 		Pane p = new Pane();
 		p.setStyle("-fx-background-color: red");
-		Pane p2 = new Pane();
-		p2.setStyle("-fx-background-color: red");
-		//timetable.add(p, 0, 0, 1, 36);
-		timetable.add(p2, 1, 10, 1, 1);
-		//timetable.setGridLinesVisible(true);
-		timetable.getChildren().remove(p);
+		//Pane p2 = new Pane();
+		//p2.setStyle("-fx-background-color: red");
+		//timetable.add(p, 0, 280, 1, 8);
+		//timetable.add(p2, 6, 10, 1, 1);
+		//timetable.getChildren().remove(p);
 		//timetable.getChildren().remove(p2);
+		
+		//timetable.setGridLinesVisible(true);
 		return timetable;
 	}
-	
+
 	private void updateMonthYearLabel() {
 		LocalDate currentDate = datePicker.getValue();
 		String currentTimeUnit = timeUnitComboBox.getSelectionModel().getSelectedItem();
