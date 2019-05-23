@@ -16,6 +16,7 @@ import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
@@ -62,7 +63,6 @@ public class MainDisplayController {
 	
 	//all the timetable views
 	GridPane dayTimetable, weekTimetable, monthTimetable, yearTimetable;
-	GridPane dayHourlyLabelGrid, weekHourlyLabelGrid;
 	
 	private Stage primaryStage;
 	
@@ -71,12 +71,11 @@ public class MainDisplayController {
 	private Node datePickerSkinPopupContent;
 	private DatePickerSkin datePickerDisplay;//pointless?
 	
-	private HBox dayView, weekView;
-	
 	private TemporalField USDayOfWeekTemporalField;//later be a general setting
 	
 	private final int timeIncrement = 5;
-	private final int timeLabelWidth = 35;
+	private final int timeLabelWidth = 50;//was 50
+	private final int timetableDisplayPadding = 20;
 	//make divisible by 4 and 7 for months and week respectively
 	private final int timetableWidth = 700;
 	public void start(Stage primaryStage, CalendarModel cmodel) {
@@ -86,7 +85,7 @@ public class MainDisplayController {
 		//retrieve events list from database
 		events = cmodel.getEvents();
 		//timetableDisplay width
-		timetableDisplay.setMinWidth(timetableWidth + timeLabelWidth + 20);
+		timetableDisplay.setMinWidth(timetableWidth + timeLabelWidth + timetableDisplayPadding);
 		//set temporal field in order to know "beginning" of week like sunday,monday,etc.
 		USDayOfWeekTemporalField = WeekFields.of(Locale.US).dayOfWeek();
 		//get current date to initialize everything
@@ -95,6 +94,7 @@ public class MainDisplayController {
 		datePicker = new DatePicker(currentDate);
 		datePicker.valueProperty().addListener((selected,oldval,newval)->{
 			//change label based on combobox value
+			System.out.println("datepicker listener called");
 			updateMonthYearLabel();
 			updateTimetable();
 		});
@@ -111,6 +111,7 @@ public class MainDisplayController {
 				yearTimetable = null;
 		//add listener to timeUnitComboBox
 		timeUnitComboBox.getSelectionModel().selectedItemProperty().addListener((selected,oldval,newval)->{
+			System.out.println("timeUnitComboBox listener called");
 			//add hover text for left and right arrow buttons
 			leftButton.setTooltip(new Tooltip("Previous " + timeUnitComboBox.getSelectionModel().getSelectedItem()));
 			rightButton.setTooltip(new Tooltip("Next " + timeUnitComboBox.getSelectionModel().getSelectedItem()));
@@ -121,7 +122,6 @@ public class MainDisplayController {
 		timeUnitComboBox.getSelectionModel().select(0);
 	}
 	public void stop() {}
-	
 	//observable list would handle updating the timetable current view
 	@FXML
 	public void addEventPopup() throws IOException {
@@ -200,24 +200,19 @@ public class MainDisplayController {
 	
 	//hard?
 	private void updateTimetable() {
-		String currentTimeUnit = timeUnitComboBox.getSelectionModel().getSelectedItem();
-		GridPane timetable = null;
+		String currentTimeUnit = timeUnitComboBox.getSelectionModel().getSelectedItem();//paramter instead?
 		switch(currentTimeUnit) {
 		case "Day":
 			timetableDisplay.setContent(dayTimetable);
-			timetable = dayTimetable;
 			break;
 		case "Week":
 			timetableDisplay.setContent(weekTimetable);
-			timetable = weekTimetable;
 			break;
 		case "Month":
 			timetableDisplay.setContent(monthTimetable);
-			timetable = monthTimetable;
 			break;
 		case "Year":
 			timetableDisplay.setContent(yearTimetable);
-			timetable = yearTimetable;
 			break;
 		}
 		//find a way to clear events...maybe recreate table...?
@@ -258,19 +253,30 @@ public class MainDisplayController {
 				Pane p = new Pane();
 				p.setPrefWidth(colSize);
 				p.setPrefHeight(rowSize);
-				if (i==0) {//prioritize labeling time for first column
+				if (i==0) {//column for time labels. each label is 1 col x 2 rows
 					if (j == rowNum-1) {//show bottom border if last row
-						p.getChildren().add(new Label("11pm"));
-						p.setStyle("-fx-background-color: white;" +
-								"-fx-border-width: 0 0 1 0;" +
+						Label timeLabel = new Label("11pm");
+						timeLabel.setMinHeight(rowSize*2);
+						timeLabel.setMinWidth(colSize);
+						timeLabel.setStyle("-fx-background-color: white;" +
+								"-fx-border-width: 0 0 1 1;" +
 								"-fx-border-color: black black black black");
-						timetable.add(p, i, j);
+						timetable.add(timeLabel, i, j, 1, 3);
+						j+=2;
 					}else if (j%12==0){//show only top border otherwise
 						String period = (j/12)<12 ? "am" : "pm";
 						int hour = ((j/12)%12==0) ? 12 : (j/12)%12;//do NOT change!!! 
-						p.getChildren().add(new Label(hour + period));
+						Label timeLabel = new Label(hour + period);
+						timeLabel.setMinHeight(rowSize*2);
+						timeLabel.setMinWidth(colSize);
+						timeLabel.setStyle("-fx-background-color: white;" + 
+								"-fx-border-width: 1 0 0 1;" +
+								"-fx-border-color: black black black black");
+						timetable.add(timeLabel, i, j, 1, 3);
+						j+=2;
+					}else {
 						p.setStyle("-fx-background-color: white;" +
-								"-fx-border-width: 1 0 0 0;" +
+								"-fx-border-width: 0 0 0 1;" +
 								"-fx-border-color: black black black black");
 						timetable.add(p, i, j);
 					}
