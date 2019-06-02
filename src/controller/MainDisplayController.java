@@ -73,6 +73,7 @@ public class MainDisplayController {
 	
 	private TemporalField USDayOfWeekTemporalField;//later be a general setting
 	
+	//abstract current timetable var
 	private final int timeIncrement = 5;
 	private final int timeLabelWidth = 50;//was 50
 	private final int timetableDisplayPadding = 20;
@@ -85,13 +86,13 @@ public class MainDisplayController {
 		//retrieve events list from database
 		events = cmodel.getEvents();
 		//timetableDisplay width
-		timetableDisplay.setMinWidth(timetableWidth + timeLabelWidth + timetableDisplayPadding);
+		timetableDisplay.setMinWidth(timetableWidth + timeLabelWidth + timetableDisplayPadding);//later use getters of current grid
 		//set temporal field in order to know "beginning" of week like sunday,monday,etc.
 		USDayOfWeekTemporalField = WeekFields.of(Locale.US).dayOfWeek();
 		//get current date to initialize everything
-		LocalDate currentDate = LocalDate.now();
+		LocalDate today = LocalDate.now();
 		//create and initialize datepicker
-		datePicker = new DatePicker(currentDate);
+		datePicker = new DatePicker(today);
 		datePicker.valueProperty().addListener((selected,oldval,newval)->{
 			//change label based on combobox value
 			System.out.println("datepicker listener called");
@@ -99,22 +100,22 @@ public class MainDisplayController {
 			updateTimetable();
 		});
 		//extract skin from datepicker for calendar display
-		datePickerSkin = new DatePickerSkin(datePicker);
+		datePickerSkin = new DatePickerSkin(datePicker);//pointless to assign?
 		datePickerSkinPopupContent = datePickerSkin.getPopupContent();
 		datePickerSkinPopupContent.setStyle("-fx-border-color: black;");
 		//add calendar display to left side of screen
 		calendarView.getChildren().add(0,datePickerSkinPopupContent);
 		//create timetables like dimensions, cells, etc
-				dayTimetable = createDayTimetable(1);
-				weekTimetable = createDayTimetable(7);
-				monthTimetable = null;
-				yearTimetable = null;
+		dayTimetable = createDayTimetable(1);
+		weekTimetable = createDayTimetable(7);
+		monthTimetable = null;
+		yearTimetable = null;
 		//add listener to timeUnitComboBox
 		timeUnitComboBox.getSelectionModel().selectedItemProperty().addListener((selected,oldval,newval)->{
 			System.out.println("timeUnitComboBox listener called");
 			//add hover text for left and right arrow buttons
-			leftButton.setTooltip(new Tooltip("Previous " + timeUnitComboBox.getSelectionModel().getSelectedItem()));
-			rightButton.setTooltip(new Tooltip("Next " + timeUnitComboBox.getSelectionModel().getSelectedItem()));
+			leftButton.setTooltip(new Tooltip("Previous " + newval));
+			rightButton.setTooltip(new Tooltip("Next " + newval));
 			updateMonthYearLabel();
 			updateTimetable();
 		});
@@ -159,8 +160,8 @@ public class MainDisplayController {
 	@FXML
 	public void setToPrevTimeUnit() {
 		//update calendar, label, schedule...label is affected when calendar or dropdown is changed 
-		String currentTimeUnit = timeUnitComboBox.getSelectionModel().getSelectedItem();
-		LocalDate currentDate = datePicker.getValue();
+		String currentTimeUnit = getSelectedTimeUnit();
+		LocalDate currentDate = getSelectedDate();
 		switch(currentTimeUnit) {
 			case "Day":
 				datePicker.setValue(currentDate.minusDays(1));
@@ -180,8 +181,8 @@ public class MainDisplayController {
 	@FXML
 	public void setToNextTimeUnit() {
 		//update calendar, label, schedule...label is affected when calendar or dropdown is changed 
-		String currentTimeUnit = timeUnitComboBox.getSelectionModel().getSelectedItem();
-		LocalDate currentDate = datePicker.getValue();
+		String currentTimeUnit = getSelectedTimeUnit();
+		LocalDate currentDate = getSelectedDate();
 		switch(currentTimeUnit) {
 			case "Day":
 				datePicker.setValue(currentDate.plusDays(1));
@@ -200,7 +201,7 @@ public class MainDisplayController {
 	
 	//hard?
 	private void updateTimetable() {
-		String currentTimeUnit = timeUnitComboBox.getSelectionModel().getSelectedItem();//paramter instead?
+		String currentTimeUnit = getSelectedTimeUnit();//paramter instead?
 		switch(currentTimeUnit) {
 		case "Day":
 			timetableDisplay.setContent(dayTimetable);
@@ -241,7 +242,7 @@ public class MainDisplayController {
 			rc.setVgrow(Priority.NEVER);
 			timetable.getRowConstraints().add(rc);
 		}
-		LocalDate currentDate = datePicker.getValue();
+		LocalDate currentDate = getSelectedDate();
 		for (int i = 1; i <= 7; i++) {
 			LocalDate localDate = currentDate.with(USDayOfWeekTemporalField,i);
 			String day = localDate.getDayOfWeek().toString().substring(0,3).toLowerCase();
@@ -253,19 +254,11 @@ public class MainDisplayController {
 				Pane p = new Pane();
 				p.setPrefWidth(colSize);
 				p.setPrefHeight(rowSize);
-				if (i==0) {//column for time labels. each label is 1 col x 2 rows
-					if (j == rowNum-1) {//show bottom border if last row
-						Label timeLabel = new Label("11pm");
-						timeLabel.setMinHeight(rowSize*2);
-						timeLabel.setMinWidth(colSize);
-						timeLabel.setStyle("-fx-background-color: white;" +
-								"-fx-border-width: 0 0 1 1;" +
-								"-fx-border-color: black black black black");
-						timetable.add(timeLabel, i, j, 1, 3);
-						j+=2;
-					}else if (j%12==0){//show only top border otherwise
+				if (i==0) {//column for time labels. each label is 1 col x 2 rows 
+					if (j%12==0){//show only top border otherwise
 						String period = (j/12)<12 ? "am" : "pm";
 						int hour = ((j/12)%12==0) ? 12 : (j/12)%12;//do NOT change!!! 
+						System.out.println(j + ": " + hour + " " + period);
 						Label timeLabel = new Label(hour + period);
 						timeLabel.setMinHeight(rowSize*2);
 						timeLabel.setMinWidth(colSize);
@@ -274,10 +267,16 @@ public class MainDisplayController {
 								"-fx-border-color: black black black black");
 						timetable.add(timeLabel, i, j, 1, 3);
 						j+=2;
-					}else {
-						p.setStyle("-fx-background-color: white;" +
-								"-fx-border-width: 0 0 0 1;" +
-								"-fx-border-color: black black black black");
+					}else {//draw bottom line and left of other cells 
+						if (j == rowNum-1) {//bottom
+							p.setStyle("-fx-background-color: white;" +
+									"-fx-border-width: 0 0 1 1;" +
+									"-fx-border-color: black black black black");
+						}else {//rest
+							p.setStyle("-fx-background-color: white;" +
+									"-fx-border-width: 0 0 0 1;" +
+									"-fx-border-color: black black black black");
+						}
 						timetable.add(p, i, j);
 					}
 				}else if (j%12==0) {//start of hour, show only top of cell
@@ -330,10 +329,9 @@ public class MainDisplayController {
 		//timetable.setGridLinesVisible(true);
 		return timetable;
 	}
-
 	private void updateMonthYearLabel() {
-		LocalDate currentDate = datePicker.getValue();
-		String currentTimeUnit = timeUnitComboBox.getSelectionModel().getSelectedItem();
+		LocalDate currentDate = getSelectedDate();
+		String currentTimeUnit = getSelectedTimeUnit();
 		Month currentMonth = currentDate.getMonth();
 		String currentMonthStr = currentMonth.toString();
 		//first three letters of month. only first letter capitalized
@@ -366,5 +364,10 @@ public class MainDisplayController {
 				break;
 		}
 	}
-	
+	private LocalDate getSelectedDate() {
+		return datePicker.getValue();
+	}
+	private String getSelectedTimeUnit() {
+		return timeUnitComboBox.getSelectionModel().getSelectedItem();
+	}
 }
