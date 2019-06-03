@@ -18,16 +18,17 @@ public abstract class HourlyTimetable extends Timetable {
 	public HourlyTimetable(CalendarModel cmodel, LocalDate initDate, int dayNum, TemporalField dayOfWeekTemporalField) {
 		super(cmodel, initDate, dayOfWeekTemporalField);
 		this.dayNum = dayNum;
+		//set dimensions for gridpane
+		rowNum = (24*60)/TIME_INCREMENT;//5 min intervals;
+		rowSize = TIME_INCREMENT; 
+		colNum = dayNum + 1;//first is time label column
+		colSize = (WIDTH-TIME_LABEL_WIDTH)/dayNum;
+		//create view
 		view = createView();
 	}
 
 	@Override
 	public Node createView() {
-		//init to zero first
-		int rowSize = TIME_INCREMENT; 
-		int colSize = (WIDTH-TIME_LABEL_WIDTH)/dayNum;
-		int rowNum = (24*60)/TIME_INCREMENT;//5 min intervals;
-		int colNum = dayNum + 1;//first is time label column
 		GridPane timetable = new GridPane();
 		//set column and row constraints
 		for (int i = 0; i < colNum; i++) {

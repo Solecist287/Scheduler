@@ -13,8 +13,8 @@ public class WeekTimetable extends HourlyTimetable {
 	public void updateView(LocalDate date) {
 		for (int i = 1; i <= 7; i++) {
 			LocalDate currentDate = date.with(dayOfWeekTemporalField,i);
-			String day = currentDate.getDayOfWeek().toString().substring(0,3).toLowerCase();
-			System.out.println("date: " + currentDate + " day: " + day + " i: " + i);
+			String dayAbbrev = currentDate.getDayOfWeek().toString().substring(0,3).toUpperCase();
+			System.out.println("date: " + currentDate + " day: " + dayAbbrev + " i: " + i);
 		}
 	}
 
