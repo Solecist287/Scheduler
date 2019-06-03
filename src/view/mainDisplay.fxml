@@ -34,16 +34,7 @@
 				<Button fx:id="leftButton" text="&lt;" onAction="#setToPrevTimeUnit" style="-fx-border-color: black"/>
 				<Button fx:id="rightButton" text="&gt;" onAction="#setToNextTimeUnit" style="-fx-border-color: black"/>
 				<Label fx:id="monthYearLabel" text=""/>
-				<ComboBox fx:id="timeUnitComboBox" promptText="time unit" style="-fx-border-color: black">
-				<items>
-			    	<FXCollections fx:factory="observableArrayList">
-			          	<String fx:value="Day" />
-			          	<String fx:value="Week" />
-			    		<String fx:value="Month" />
-			    		<String fx:value="Year" />
-			    	</FXCollections>
-		      </items>
-				</ComboBox>
+				<ComboBox fx:id="timeUnitComboBox" promptText="time unit" style="-fx-border-color: black"/>
 			</children>
 		</HBox>
 	</top>
