@@ -1,26 +1,25 @@
 package model;
 
 import java.time.LocalDate;
+import java.time.temporal.TemporalField;
 
 import javafx.scene.Node;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.scene.layout.GridPane;
 
 public abstract class Timetable {
 	CalendarModel cmodel;
 	ObservableList<Event> events;
 	Node view;
-	final int width = 742;
+	TemporalField dayOfWeekTemporalField;
+	public static final int WIDTH = 742;
 	LocalDate lastDateEntered;//highlighted date, if applicable
-	public Timetable(CalendarModel cmodel, LocalDate initDate) {
+	public Timetable(CalendarModel cmodel, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
 		this.cmodel = cmodel;
 		events = FXCollections.observableList(cmodel.getEvents());
 		lastDateEntered = initDate;
+		this.dayOfWeekTemporalField = dayOfWeekTemporalField;
 		view = null;
-	}
-	public int getWidth() {
-		return width;
 	}
 	public Node getView() {
 		return view;

@@ -1,11 +1,12 @@
 package model;
 
 import java.time.LocalDate;
+import java.time.temporal.TemporalField;
 
 public class DayTimetable extends HourlyTimetable {
 
-	public DayTimetable(CalendarModel cmodel, LocalDate initDate) {
-		super(cmodel, initDate, 1);
+	public DayTimetable(CalendarModel cmodel, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
+		super(cmodel, initDate, 1, dayOfWeekTemporalField);
 	}
 
 	@Override

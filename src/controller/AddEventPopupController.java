@@ -32,23 +32,22 @@ public class AddEventPopupController {
 	Button saveButton;
 	
 	private CalendarModel cmodel;
-	private Stage primaryStage, owner;
+	private Stage primaryStage;
 	private int comboBoxWidth = 77;//specific, but perfectly fits time choices
-	private final int timeIncrement = 5;
+	private final int TIME_INCREMENT = 5;
 	
-	public void start(Stage primaryStage, Stage owner, CalendarModel cmodel) {
+	public void start(Stage primaryStage, CalendarModel cmodel) {
 		this.primaryStage = primaryStage;
-		this.owner = owner;
 		this.cmodel = cmodel;LocalTime t = LocalTime.MIDNIGHT;
 		//fill ComboBoxes with time choices for event
 		do {
 			startTimeComboBox.getItems().add(t);
 			endTimeComboBox.getItems().add(t);
-			t = t.plusMinutes(timeIncrement);
+			t = t.plusMinutes(TIME_INCREMENT);
 		} while(!t.equals(LocalTime.MIDNIGHT));
 		//set ComboBox widths
-		startTimeComboBox.setStyle("-fx-pref-width: "+comboBoxWidth);
-		endTimeComboBox.setStyle("-fx-pref-width: "+comboBoxWidth);
+		startTimeComboBox.setStyle("-fx-pref-width: " + comboBoxWidth);
+		endTimeComboBox.setStyle("-fx-pref-width: " + comboBoxWidth);
 		//set default values
 		titleTextField.setText("Event Title");
 		startDatePicker.setValue(LocalDate.now());
@@ -85,12 +84,12 @@ public class AddEventPopupController {
 		while(!newEvent.isDuring(currentEvent) && i<events.size()) {
 			if (newEvent.isBefore(currentEvent)) {
 				events.add(i,newEvent);
-				cmodel.printEvents();
+				cmodel.printEvents();//debugging
 				primaryStage.close();
 				break;
 			}else if (i == events.size()-1 && newEvent.isAfter(currentEvent)) {//after last event
 				events.add(newEvent);
-				cmodel.printEvents();
+				cmodel.printEvents();//debugging
 				primaryStage.close();
 				break;
 			}

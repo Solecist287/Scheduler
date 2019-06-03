@@ -1,6 +1,7 @@
 package model;
 
 import java.time.LocalDate;
+import java.time.temporal.TemporalField;
 
 import javafx.scene.Node;
 import javafx.scene.control.Label;
@@ -10,12 +11,12 @@ import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 
 public abstract class HourlyTimetable extends Timetable {
-	final int timeIncrement = 5;
-	final int timeLabelWidth = 42;
+	final int TIME_INCREMENT = 5;
+	final int TIME_LABEL_WIDTH = 42;
 	int rowNum, rowSize, colNum, colSize, dayNum;
 	
-	public HourlyTimetable(CalendarModel cmodel, LocalDate initDate, int dayNum) {
-		super(cmodel, initDate);
+	public HourlyTimetable(CalendarModel cmodel, LocalDate initDate, int dayNum, TemporalField dayOfWeekTemporalField) {
+		super(cmodel, initDate, dayOfWeekTemporalField);
 		this.dayNum = dayNum;
 		view = createView();
 	}
@@ -23,14 +24,14 @@ public abstract class HourlyTimetable extends Timetable {
 	@Override
 	public Node createView() {
 		//init to zero first
-		int rowSize = timeIncrement; 
-		int colSize = (width-timeLabelWidth)/dayNum;
-		int rowNum = (24*60)/timeIncrement;//5 min intervals;
+		int rowSize = TIME_INCREMENT; 
+		int colSize = (WIDTH-TIME_LABEL_WIDTH)/dayNum;
+		int rowNum = (24*60)/TIME_INCREMENT;//5 min intervals;
 		int colNum = dayNum + 1;//first is time label column
 		GridPane timetable = new GridPane();
 		//set column and row constraints
 		for (int i = 0; i < colNum; i++) {
-			int ccSize = (i == 0) ? timeLabelWidth : colSize;
+			int ccSize = (i == 0) ? TIME_LABEL_WIDTH : colSize;
 			timetable.getColumnConstraints().add(new ColumnConstraints(ccSize));
 		}
 		for (int i = 0; i < rowNum; i++) {
@@ -47,7 +48,7 @@ public abstract class HourlyTimetable extends Timetable {
 					if (j%12==0){//show only top border otherwise
 						String period = (j/12)<12 ? "am" : "pm";
 						int hour = ((j/12)%12==0) ? 12 : (j/12)%12;//converts hour from military to 12-hour time
-						System.out.println(j + ": " + hour + " " + period);
+						//System.out.println(j + ": " + hour + " " + period);
 						Label hourLabel = new Label(hour + period);
 						hourLabel.setMinHeight(rowSize*2);
 						hourLabel.setMinWidth(colSize);

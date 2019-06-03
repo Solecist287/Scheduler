@@ -2,57 +2,33 @@ package controller;
 
 import javafx.scene.control.ScrollPane;
 import java.io.IOException;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.Month;
-import java.time.Year;
 import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 
-import javafx.collections.FXCollections;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Label;
-import javafx.scene.control.ListCell;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
 import javafx.scene.control.Tooltip;
-import javafx.scene.control.ScrollPane.ScrollBarPolicy;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.skin.DatePickerSkin;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Priority;
-import javafx.scene.layout.RowConstraints;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.CalendarModel;
 import model.DayTimetable;
-import model.Event;
+import model.MonthTimetable;
 import model.Timetable;
 import model.WeekTimetable;
+import model.YearTimetable;
 
 public class MainDisplayController {
-	private CalendarModel cmodel;
-	private List <Event> events;
-	@FXML
-	BorderPane mainDisplay;
 	@FXML
 	ScrollPane timetableDisplay;
 	@FXML
@@ -65,31 +41,26 @@ public class MainDisplayController {
 	Button leftButton, rightButton;
 	
 	//all the timetable views
-	Timetable dayTimetable, weekTimetable, monthTimetable, yearTimetable, selectedTimetable;
+	//may not need to save day/week/month/yeartimetables to vars
+	private Timetable dayTimetable, weekTimetable, monthTimetable, yearTimetable, selectedTimetable;
+	
+	private CalendarModel cmodel;
 	
 	private Stage primaryStage;
 	
-	private DatePicker datePicker;
-	private DatePickerSkin datePickerSkin;
-	private Node datePickerSkinPopupContent;
-	private DatePickerSkin datePickerDisplay;//pointless?
+	private DatePicker datePicker;//underlying date selection logic
+	private Node datePickerSkinPopupContent;//display for date selection
 	
 	private TemporalField USDayOfWeekTemporalField;//later be a general setting
 	
-	//abstract current timetable var
-	private final int timeIncrement = 5;
-	private final int timeLabelWidth = 42;//was 50
-	private final int timetableDisplayPadding = 20;
-	//make divisible by 4 and 7 for months and week respectively
-	private final int width = 742;
+	private final int PADDING = 20;//for timetable display
+	
 	public void start(Stage primaryStage, CalendarModel cmodel) {
 		this.primaryStage = primaryStage;
 		//to get data for/from model
 		this.cmodel = cmodel;
-		//retrieve events list from database
-		events = cmodel.getEvents();
 		//timetableDisplay width
-		timetableDisplay.setMinWidth(width + timetableDisplayPadding);//later use getters of current grid
+		timetableDisplay.setMinWidth(Timetable.WIDTH + PADDING);//later use getters of current grid
 		//set temporal field in order to know "beginning" of week like sunday,monday,etc.
 		USDayOfWeekTemporalField = WeekFields.of(Locale.US).dayOfWeek();
 		//get current date to initialize everything
@@ -97,27 +68,25 @@ public class MainDisplayController {
 		//create and initialize datepicker
 		datePicker = new DatePicker(today);
 		datePicker.valueProperty().addListener((selected,oldval,newval)->{
-			//change label based on combobox value
-			System.out.println("datepicker listener called");
+			//System.out.println("datepicker listener called");
 			updateMonthYearLabel();
 			updateTimetable();
 		});
-		//extract skin from datepicker for calendar display
-		datePickerSkin = new DatePickerSkin(datePicker);//pointless to assign?
-		datePickerSkinPopupContent = datePickerSkin.getPopupContent();
+		//extract visuals from datepicker
+		datePickerSkinPopupContent = new DatePickerSkin(datePicker).getPopupContent();
 		datePickerSkinPopupContent.setStyle("-fx-border-color: black;");
 		//add calendar display to left side of screen
 		calendarView.getChildren().add(0,datePickerSkinPopupContent);
 		//create timetables like dimensions, cells, etc
-		dayTimetable = new DayTimetable(cmodel, today);
-		weekTimetable = new WeekTimetable(cmodel, today);
-		monthTimetable = null;
-		yearTimetable = null;
+		dayTimetable = new DayTimetable(cmodel, today, USDayOfWeekTemporalField);
+		weekTimetable = new WeekTimetable(cmodel, today, USDayOfWeekTemporalField);
+		monthTimetable = new MonthTimetable(cmodel, today, USDayOfWeekTemporalField);
+		yearTimetable = new YearTimetable(cmodel, today, USDayOfWeekTemporalField);
 		//populate combobox with timetables
 		timeUnitComboBox.getItems().addAll(dayTimetable, weekTimetable, monthTimetable, yearTimetable);
 		//add listener to timeUnitComboBox
 		timeUnitComboBox.getSelectionModel().selectedItemProperty().addListener((selected,oldval,newval)->{
-			System.out.println("timeUnitComboBox listener called");
+			//System.out.println("timeUnitComboBox listener called");
 			//add hover text for left and right arrow buttons
 			leftButton.setTooltip(new Tooltip("Previous " + newval));
 			rightButton.setTooltip(new Tooltip("Next " + newval));
@@ -141,7 +110,7 @@ public class MainDisplayController {
 		GridPane root = (GridPane)loader.load();
 		//retrieve and start up controller
 		AddEventPopupController addEventPopupController = loader.getController();
-		addEventPopupController.start(popupStage, primaryStage, cmodel);
+		addEventPopupController.start(popupStage, cmodel);
 		//set up stage
 		popupStage.initModality(Modality.APPLICATION_MODAL);
 		popupStage.initOwner(primaryStage);
@@ -209,44 +178,35 @@ public class MainDisplayController {
 		selectedTimetable.updateView(getSelectedDate());
 	}
 	
-	//hard?
+	//done? delegated timetable update to timetable classes
 	private void updateTimetable() {
-		selectedTimetable = getSelectedTimetable();
-		selectedTimetable.updateView(getSelectedDate());
-		timetableDisplay.setContent(getSelectedView());
+		selectedTimetable = getSelectedTimetable();//set selected timetable
+		selectedTimetable.updateView(getSelectedDate());//update timetable itself
+		timetableDisplay.setContent(getSelectedView());//show updated timetable
 	}
 	private void updateMonthYearLabel() {
-		LocalDate currentDate = getSelectedDate();
-		String currentTimeUnit = getSelectedTimeUnit();
-		Month currentMonth = currentDate.getMonth();
-		String currentMonthStr = currentMonth.toString();
-		//first three letters of month. only first letter capitalized
-		String currentMonthAbbrev = currentMonthStr.substring(0,1) + currentMonthStr.substring(1,3).toLowerCase();
-		int currentYear = currentDate.getYear();
-		switch(currentTimeUnit) {
-			case "Week"://"MONTH YEAR" or "MONTH-MONTH YEAR"
-				Month beginningOfCurrentWeekMonth = currentDate.with(USDayOfWeekTemporalField, 1).getMonth();
-				String beginningOfCurrentWeekMonthStr = beginningOfCurrentWeekMonth.toString();
-				String beginningOfCurrentWeekMonthAbbrev = beginningOfCurrentWeekMonthStr.substring(0,1)
-						+ beginningOfCurrentWeekMonthStr.substring(1,3).toLowerCase();
-				Month endOfCurrentWeekMonth = currentDate.with(USDayOfWeekTemporalField,7).getMonth();
-				String endOfCurrentWeekMonthStr = endOfCurrentWeekMonth.toString();
-				String endOfCurrentWeekMonthAbbrev = endOfCurrentWeekMonthStr.substring(0,1) +
-						endOfCurrentWeekMonthStr.substring(1,3).toLowerCase();
-				if (!beginningOfCurrentWeekMonthAbbrev.equals(currentMonthAbbrev)) {
-					monthYearLabel.setText(beginningOfCurrentWeekMonthAbbrev + "-" + currentMonthAbbrev + " " + currentYear);
-				}else if (!endOfCurrentWeekMonthAbbrev.equals(currentMonthAbbrev)) {
-					monthYearLabel.setText(currentMonthAbbrev + "-" + endOfCurrentWeekMonthAbbrev + " " + currentYear);
-				}else {
-					monthYearLabel.setText(currentMonthAbbrev + " " + currentYear);
+		LocalDate date = getSelectedDate();
+		String timeUnit = getSelectedTimeUnit();
+		int year = date.getYear();
+		switch(timeUnit) {
+			case "Week"://"MONTH YEAR" or "MONTH-MONTH YEAR" depending on if week is between two months
+				String startMonth = date.with(USDayOfWeekTemporalField, 1).getMonth().toString();
+				String startMonthAbbrev = startMonth.substring(0,1) + startMonth.substring(1,3).toLowerCase();
+				String endMonth = date.with(USDayOfWeekTemporalField,7).getMonth().toString();
+				String endMonthAbbrev = endMonth.substring(0,1) + endMonth.substring(1,3).toLowerCase();
+				if (!startMonthAbbrev.equals(endMonthAbbrev)) {
+					monthYearLabel.setText(startMonthAbbrev + "-" + endMonthAbbrev + " " + year);
+				}else {//otherwise arbitrarily choose one of them since both are the same
+					monthYearLabel.setText(startMonthAbbrev + " " + year);
 				}
 				break;
 			case "Year"://just shows "YEAR"
-				monthYearLabel.setText(currentYear + "");
+				monthYearLabel.setText(year + "");
 				break;
 			default://MONTH and DAY both show "MONTH YEAR"
-				//month and day are the same case
-				monthYearLabel.setText(currentMonthAbbrev + " " + currentYear);
+				String month = date.getMonth().toString();
+				String monthAbbrev = month.substring(0,1) + month.substring(1,3).toLowerCase();//"Jun", "Feb", etc.
+				monthYearLabel.setText(monthAbbrev + " " + year);
 				break;
 		}
 	}
