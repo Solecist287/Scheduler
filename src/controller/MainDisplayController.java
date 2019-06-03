@@ -65,7 +65,7 @@ public class MainDisplayController {
 	Button leftButton, rightButton;
 	
 	//all the timetable views
-	Timetable dayTimetable, weekTimetable, monthTimetable, yearTimetable;
+	Timetable dayTimetable, weekTimetable, monthTimetable, yearTimetable, selectedTimetable;
 	
 	private Stage primaryStage;
 	
@@ -126,6 +126,7 @@ public class MainDisplayController {
 		});
 		//initialize timeunitcombobox to time unit "Day" (triggers its listener to init stuff)
 		timeUnitComboBox.getSelectionModel().select(0);
+		selectedTimetable = dayTimetable;
 	}
 	public void stop() {}
 	//observable list would handle updating the timetable current view
@@ -157,8 +158,8 @@ public class MainDisplayController {
 		LocalDate currentDate = LocalDate.now();
 		//change calendarview which changes label
 		datePicker.setValue(currentDate);
-		//change scheduleview
-		updateTimetable();
+		//after date is changed, update current timetable
+		selectedTimetable.updateView(getSelectedDate());
 	}
 	
 	//done?
@@ -181,6 +182,8 @@ public class MainDisplayController {
 				datePicker.setValue(currentDate.minusYears(1));
 				break;
 		}
+		//after date is changed, update current timetable
+		selectedTimetable.updateView(getSelectedDate());
 	}
 	//done?
 	@FXML
@@ -202,13 +205,16 @@ public class MainDisplayController {
 				datePicker.setValue(currentDate.plusYears(1));
 				break;
 		}
+		//after date is changed, update current timetable
+		selectedTimetable.updateView(getSelectedDate());
 	}
 	
 	//hard?
 	private void updateTimetable() {
+		selectedTimetable = getSelectedTimetable();
+		selectedTimetable.updateView(getSelectedDate());
 		timetableDisplay.setContent(getSelectedView());
 	}
-	
 	private void updateMonthYearLabel() {
 		LocalDate currentDate = getSelectedDate();
 		String currentTimeUnit = getSelectedTimeUnit();
@@ -246,6 +252,9 @@ public class MainDisplayController {
 	}
 	private LocalDate getSelectedDate() {
 		return datePicker.getValue();
+	}
+	private Timetable getSelectedTimetable() {
+		return timeUnitComboBox.getSelectionModel().getSelectedItem();
 	}
 	//views such as daytimetable.getView(), weektimetable.getView(), etc.
 	private Node getSelectedView() {
