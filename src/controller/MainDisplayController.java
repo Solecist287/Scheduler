@@ -51,8 +51,8 @@ public class MainDisplayController {
 	private DatePicker datePicker;//underlying date selection logic
 	private Node datePickerSkinPopupContent;//display for date selection
 	
-	private TemporalField USDayOfWeekTemporalField;//later be a general setting
-	
+	private TemporalField dayOfWeekTemporalField;//later be a general setting
+	private Locale localeSetting;
 	private final int PADDING = 20;//for timetable display
 	
 	public void start(Stage primaryStage, CalendarModel cmodel) {
@@ -61,12 +61,17 @@ public class MainDisplayController {
 		this.cmodel = cmodel;
 		//timetableDisplay width
 		timetableDisplay.setMinWidth(Timetable.WIDTH + PADDING);//later use getters of current grid
+		//default locale
+		localeSetting = Locale.FRANCE;
 		//set temporal field in order to know "beginning" of week like sunday,monday,etc.
-		USDayOfWeekTemporalField = WeekFields.of(Locale.US).dayOfWeek();
+		dayOfWeekTemporalField = WeekFields.of(localeSetting).dayOfWeek();
+		//set locale so calendar is appropriate for region
+		Locale.setDefault(localeSetting);
 		//get current date to initialize everything
 		LocalDate today = LocalDate.now();
 		//create and initialize datepicker
 		datePicker = new DatePicker(today);
+		datePicker.setShowWeekNumbers(false);
 		datePicker.valueProperty().addListener((selected,oldval,newval)->{
 			//System.out.println("datepicker listener called");
 			updateMonthYearLabel();
@@ -78,10 +83,10 @@ public class MainDisplayController {
 		//add calendar display to left side of screen
 		calendarView.getChildren().add(0,datePickerSkinPopupContent);
 		//create timetables like dimensions, cells, etc
-		dayTimetable = new DayTimetable(cmodel, today, USDayOfWeekTemporalField);
-		weekTimetable = new WeekTimetable(cmodel, today, USDayOfWeekTemporalField);
-		monthTimetable = new MonthTimetable(cmodel, today, USDayOfWeekTemporalField);
-		yearTimetable = new YearTimetable(cmodel, today, USDayOfWeekTemporalField);
+		dayTimetable = new DayTimetable(cmodel, today, dayOfWeekTemporalField);
+		weekTimetable = new WeekTimetable(cmodel, today, dayOfWeekTemporalField);
+		monthTimetable = new MonthTimetable(cmodel, today, dayOfWeekTemporalField);
+		yearTimetable = new YearTimetable(cmodel, today, dayOfWeekTemporalField);
 		//populate combobox with timetables
 		timeUnitComboBox.getItems().addAll(dayTimetable, weekTimetable, monthTimetable, yearTimetable);
 		//add listener to timeUnitComboBox
@@ -190,9 +195,9 @@ public class MainDisplayController {
 		int year = date.getYear();
 		switch(timeUnit) {
 			case "Week"://"MONTH YEAR" or "MONTH-MONTH YEAR" depending on if week is between two months
-				String startMonth = date.with(USDayOfWeekTemporalField, 1).getMonth().toString();
+				String startMonth = date.with(dayOfWeekTemporalField, 1).getMonth().toString();
 				String startMonthAbbrev = startMonth.substring(0,1) + startMonth.substring(1,3).toLowerCase();
-				String endMonth = date.with(USDayOfWeekTemporalField,7).getMonth().toString();
+				String endMonth = date.with(dayOfWeekTemporalField,7).getMonth().toString();
 				String endMonthAbbrev = endMonth.substring(0,1) + endMonth.substring(1,3).toLowerCase();
 				if (!startMonthAbbrev.equals(endMonthAbbrev)) {
 					monthYearLabel.setText(startMonthAbbrev + "-" + endMonthAbbrev + " " + year);

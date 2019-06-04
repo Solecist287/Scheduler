@@ -18,7 +18,7 @@ public abstract class HourlyTimetable extends Timetable {
 	public HourlyTimetable(CalendarModel cmodel, LocalDate initDate, int dayNum, TemporalField dayOfWeekTemporalField) {
 		super(cmodel, initDate, dayOfWeekTemporalField);
 		this.dayNum = dayNum;
-		//set dimensions for gridpane
+		//set grid dimensions
 		rowNum = (24*60)/TIME_INCREMENT;//5 min intervals;
 		rowSize = TIME_INCREMENT; 
 		colNum = dayNum + 1;//first is time label column
