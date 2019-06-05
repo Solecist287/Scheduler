@@ -17,7 +17,6 @@ public class DayTimetable extends HourlyTimetable {
 	@Override
 	public void update(LocalDate date) {
 		if (!lastDateEntered.equals(date)) {
-			GridPane gridPane = (GridPane)view;
 			//draw events that match date
 			for (int i = 0; i < events.size(); i++) {
 				Event e = events.get(i);
@@ -25,7 +24,7 @@ public class DayTimetable extends HourlyTimetable {
 					Pane p = new Pane();
 					Color c = e.getBackgroundColor();
 					p.setStyle("-fx-background-color: rgb(" + c.getRed()*255 + "," + c.getGreen()*255 + "," + c.getBlue()*255 + ");");
-					gridPane.add(p, 1, e.getRow(), 1, e.getRowSpan());
+					hourlyGrid.add(p, 1, e.getRow(), 1, e.getRowSpan());
 				}
 			}
 		}

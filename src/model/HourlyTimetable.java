@@ -14,6 +14,7 @@ public abstract class HourlyTimetable extends Timetable {
 	final int TIME_INCREMENT = 5;
 	final int TIME_LABEL_WIDTH = 42;
 	int rowNum, rowSize, colNum, colSize, dayNum;
+	GridPane hourlyGrid;
 	
 	public HourlyTimetable(CalendarModel cmodel, LocalDate initDate, int dayNum, TemporalField dayOfWeekTemporalField) {
 		super(cmodel, initDate, dayOfWeekTemporalField);
@@ -29,14 +30,14 @@ public abstract class HourlyTimetable extends Timetable {
 
 	@Override
 	public Node createView() {
-		GridPane timetable = new GridPane();
+		hourlyGrid = new GridPane();
 		//set column and row constraints
 		for (int i = 0; i < colNum; i++) {
 			int ccSize = (i == 0) ? TIME_LABEL_WIDTH : colSize;
-			timetable.getColumnConstraints().add(new ColumnConstraints(ccSize));
+			hourlyGrid.getColumnConstraints().add(new ColumnConstraints(ccSize));
 		}
 		for (int i = 0; i < rowNum; i++) {
-			timetable.getRowConstraints().add(new RowConstraints(rowSize));
+			hourlyGrid.getRowConstraints().add(new RowConstraints(rowSize));
 		}
 		//draw and set initial values for timetable
 		for (int i = 0; i < colNum; i++) {
@@ -54,7 +55,7 @@ public abstract class HourlyTimetable extends Timetable {
 						hourLabel.setMinHeight(rowSize*2);
 						hourLabel.setMinWidth(colSize);
 						hourLabel.setStyle(defaultStyle + "-fx-border-width: 1 0 0 1;");
-						timetable.add(hourLabel, i, j, 1, 3);
+						hourlyGrid.add(hourLabel, i, j, 1, 3);
 						j+=2;
 					}else {//draw bottom line and left of other cells 
 						if (j == rowNum-1) {//bottom
@@ -62,7 +63,7 @@ public abstract class HourlyTimetable extends Timetable {
 						}else {//rest
 							p.setStyle(defaultStyle + "-fx-border-width: 0 0 0 1;");
 						}
-						timetable.add(p, i, j);
+						hourlyGrid.add(p, i, j);
 					}
 				}else if (j%12==0) {//start of hour, show only top of cell
 					if (i==colNum-1) {
@@ -70,24 +71,24 @@ public abstract class HourlyTimetable extends Timetable {
 					}else {
 						p.setStyle(defaultStyle + "-fx-border-width: 1 0 0 1;");
 					}
-					timetable.add(p, i, j);
+					hourlyGrid.add(p, i, j);
 				}else if (j == rowNum - 1){//last row of cell
 					if (i==colNum-1) {
 						p.setStyle(defaultStyle + "-fx-border-width: 0 1 1 1;");
 					}else {
 						p.setStyle(defaultStyle + "-fx-border-width: 0 0 1 1;");
 					}
-					timetable.add(p, i, j);
+					hourlyGrid.add(p, i, j);
 				}else {//just draw left and right lines of cell
 					if (i==colNum-1) {
 						p.setStyle(defaultStyle + "-fx-border-width: 0 1 0 1;");
 					}else {
 						p.setStyle(defaultStyle + "-fx-border-width: 0 0 0 1;");
 					}
-					timetable.add(p, i, j);
+					hourlyGrid.add(p, i, j);
 				}
 			}
 		}
-		return timetable;
+		return hourlyGrid;
 	}
 }
