@@ -19,7 +19,7 @@ public class MonthTimetable extends Timetable {
 	}
 
 	@Override
-	public void updateView(LocalDate date) {
+	public void update(LocalDate date) {
 		// TODO Auto-generated method stub
 
 	}

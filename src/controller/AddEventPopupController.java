@@ -51,7 +51,9 @@ public class AddEventPopupController {
 		//set default values
 		titleTextField.setText("Event Title");
 		startDatePicker.setValue(LocalDate.now());
+		startDatePicker.setShowWeekNumbers(false);
 		endDatePicker.setValue(LocalDate.now());
+		endDatePicker.setShowWeekNumbers(false);
 		startTimeComboBox.getSelectionModel().select(0);
 		endTimeComboBox.getSelectionModel().select(0);
 	}

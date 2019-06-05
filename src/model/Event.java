@@ -1,7 +1,9 @@
 package model;
 
 import java.io.Serializable;
+import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import javafx.scene.paint.Color;
 
@@ -21,11 +23,11 @@ public class Event implements Serializable{
 		this.setEndDateTime(endDateTime);
 		this.setBackgroundColor(backgroundColor);
 	}
-	//ends before
+	
 	public boolean isBefore(Event other) {
 		return this.getEndDateTime().isBefore(other.getStartDateTime());
 	}
-	//starts after
+	
 	public boolean isAfter(Event other) {
 		return this.getStartDateTime().isAfter(other.getEndDateTime());
 	}
@@ -62,6 +64,14 @@ public class Event implements Serializable{
 		return endDateTime;
 	}
 
+	public int getRowSpan() {
+		return (int)(Duration.between(startDateTime.toLocalTime(), endDateTime.toLocalTime()).toMinutes())/5;
+	}
+	public int getRow() {
+		LocalTime startTime = startDateTime.toLocalTime();
+		return (startTime.getHour() * 60 + startTime.getMinute())/5;
+	}
+	
 	public void setEndDateTime(LocalDateTime endDateTime) {
 		this.endDateTime = endDateTime;
 	}
@@ -69,7 +79,7 @@ public class Event implements Serializable{
 	public Color getBackgroundColor() {
 		return backgroundColor;
 	}
-
+	
 	public void setBackgroundColor(Color backgroundColor) {
 		this.backgroundColor = backgroundColor;
 	}

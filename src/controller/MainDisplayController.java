@@ -133,7 +133,7 @@ public class MainDisplayController {
 		//change calendarview which changes label
 		datePicker.setValue(currentDate);
 		//after date is changed, update current timetable
-		selectedTimetable.updateView(getSelectedDate());
+		selectedTimetable.update(getSelectedDate());
 	}
 	
 	//done?
@@ -157,7 +157,7 @@ public class MainDisplayController {
 				break;
 		}
 		//after date is changed, update current timetable
-		selectedTimetable.updateView(getSelectedDate());
+		selectedTimetable.update(getSelectedDate());
 	}
 	//done?
 	@FXML
@@ -180,13 +180,13 @@ public class MainDisplayController {
 				break;
 		}
 		//after date is changed, update current timetable
-		selectedTimetable.updateView(getSelectedDate());
+		selectedTimetable.update(getSelectedDate());
 	}
 	
 	//done? delegated timetable update to timetable classes
 	private void updateTimetable() {
 		selectedTimetable = getSelectedTimetable();//set selected timetable
-		selectedTimetable.updateView(getSelectedDate());//update timetable itself
+		selectedTimetable.update(getSelectedDate());//update timetable itself
 		timetableDisplay.setContent(getSelectedView());//show updated timetable
 	}
 	private void updateMonthYearLabel() {

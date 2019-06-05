@@ -90,7 +90,4 @@ public abstract class HourlyTimetable extends Timetable {
 		}
 		return timetable;
 	}
-	
-	//@Override
-	//public void updateView(LocalDate date) {}
 }

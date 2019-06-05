@@ -26,7 +26,7 @@ public abstract class Timetable {
 	}
 	public abstract Node createView();
 	//refreshes rows/cols if applicable and highlights correct date if applicable
-	public abstract void updateView(LocalDate date);
+	public abstract void update(LocalDate date);
 	
 	public abstract String toString();//displays text for timeunitcombobox
 }
