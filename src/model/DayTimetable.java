@@ -1,14 +1,8 @@
 package model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.TemporalField;
 import java.util.List;
-
-import javafx.collections.ListChangeListener;
-import javafx.collections.ObservableList;
-import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 
 public class DayTimetable extends HourlyTimetable {
 
@@ -30,9 +24,9 @@ public class DayTimetable extends HourlyTimetable {
 				break;//stop searching
 			//add events on this input date
 			}else if (e.getStartDateTime().toLocalDate().equals(date)) {
-				Timeslot newTimeslot = new Timeslot(e);
-				timeslots.add(newTimeslot);
-				hourlyGrid.add(newTimeslot.getPane(), 1, e.getRow(), 1, e.getRowSpan());
+				Timeslot t = new Timeslot(e);
+				timeslots.add(t);
+				hourlyGrid.add(t.getView(), 1, e.getRow(), 1, e.getRowSpan());
 				//hourlyGrid.getChildren().remove(p);
 			}
 		}
@@ -44,7 +38,7 @@ public class DayTimetable extends HourlyTimetable {
 		if (e.getStartDateTime().toLocalDate().equals(lastDateEntered)) {
 			Timeslot t = new Timeslot(e);
 			timeslots.add(t);
-			hourlyGrid.add(t.getPane(), 1, e.getRow(), 1, e.getRowSpan());
+			hourlyGrid.add(t.getView(), 1, e.getRow(), 1, e.getRowSpan());
 		}
 	}
 
@@ -54,7 +48,7 @@ public class DayTimetable extends HourlyTimetable {
 			for (int i = 0; i < timeslots.size(); i++) {
         		Timeslot t = timeslots.get(i);
         		if (e.equals(t.getEvent())) {
-        			hourlyGrid.getChildren().remove(t.getPane());
+        			hourlyGrid.getChildren().remove(t.getView());
         			timeslots.remove(t);
         			break;
         		}

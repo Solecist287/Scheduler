@@ -3,7 +3,6 @@ package controller;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -37,7 +36,7 @@ public class AddEventPopupController {
 	private Stage primaryStage;
 	private int comboBoxWidth = 77;//specific, but perfectly fits time choices
 	private final int TIME_INCREMENT = 5;
-	
+	private final int MIN_EVENT_TIME = 35;
 	public void start(Stage primaryStage, CalendarModel cmodel, ObservableList<Event> events) {
 		this.primaryStage = primaryStage;
 		this.cmodel = cmodel;
@@ -75,6 +74,11 @@ public class AddEventPopupController {
 		//make sure startdatetime is before enddatetime (cannot be equal either), does not allow events span days
 		if (startDateTime.isAfter(endDateTime) || startDateTime.equals(endDateTime) ||
 				!startDateTime.toLocalDate().equals(endDateTime.toLocalDate())) {return;}
+		//make sure event is not <30 min
+		if (endDateTime.getMinute() - startDateTime.getMinute() < MIN_EVENT_TIME) {
+			System.out.println("too short: difference is: " +  (endDateTime.getMinute() - startDateTime.getMinute()));
+			return;
+		}
 		//create event object
 		Event newEvent = new Event(title, description, startDateTime, endDateTime, color);
 		//check where to place event and do no insert if it collides with other event(s)

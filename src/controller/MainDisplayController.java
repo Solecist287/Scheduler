@@ -3,7 +3,6 @@ package controller;
 import javafx.scene.control.ScrollPane;
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
@@ -22,7 +21,6 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.skin.DatePickerSkin;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.CalendarModel;
@@ -70,11 +68,17 @@ public class MainDisplayController {
             while (change.next()) {
                 if (change.wasAdded()) {
                 	for (Event e : change.getAddedSubList()) {
-                		selectedTimetable.addEvent(e);
+                		dayTimetable.addEvent(e);
+                		weekTimetable.addEvent(e);
+                		//monthTimetable.addEvent(e);
+                		//yearTimetable.addEvent(e);
                 	}
                 } else if (change.wasRemoved()) {
                     for (Event e : change.getRemoved()) {
-                    	selectedTimetable.removeEvent(e);
+                    	dayTimetable.removeEvent(e);
+                    	weekTimetable.removeEvent(e);
+                    	//monthTimetable.removeEvent(e);
+                    	//yearTimetable.removeEvent(e);
                     }
                 }
             }
@@ -232,13 +236,6 @@ public class MainDisplayController {
 	}
 	private LocalDate getSelectedDate() {
 		return datePicker.getValue();
-	}
-	private Timetable getSelectedTimetable() {
-		return timeUnitComboBox.getSelectionModel().getSelectedItem();
-	}
-	//views such as daytimetable.getView(), weektimetable.getView(), etc.
-	private Node getSelectedView() {
-		return timeUnitComboBox.getSelectionModel().getSelectedItem().getView();
 	}
 	private String getSelectedTimeUnit() {
 		return timeUnitComboBox.getSelectionModel().getSelectedItem().toString();

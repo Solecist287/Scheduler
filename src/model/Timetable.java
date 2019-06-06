@@ -14,7 +14,6 @@ public abstract class Timetable {
 	public static final int WIDTH = 742;
 	LocalDate lastDateEntered;//highlighted date, if applicable
 	public Timetable(LocalDate initDate, TemporalField dayOfWeekTemporalField) {
-		this.events = events;
 		lastDateEntered = initDate;
 		this.dayOfWeekTemporalField = dayOfWeekTemporalField;
 		view = null;
@@ -23,9 +22,11 @@ public abstract class Timetable {
 		return view;
 	}
 	public abstract void createView();
-	//refreshes rows/cols if applicable and highlights correct date if applicable
+	//reconstructs timeslots if lastdateentered and currentdate not in same time unit
 	public abstract void update(LocalDate date, List<Event> events);
+	//adds new timeslot if event is in same timeunit
 	public abstract void addEvent(Event e);
+	//removes timeslot if event is in same timeunit
 	public abstract void removeEvent(Event e);
 	public abstract String toString();//displays text for timeunitcombobox
 }
