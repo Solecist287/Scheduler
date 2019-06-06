@@ -18,8 +18,8 @@ public abstract class HourlyTimetable extends Timetable {
 	int rowNum, rowSize, colNum, colSize, dayNum;
 	GridPane hourlyGrid;
 	List<Timeslot> timeslots;
-	public HourlyTimetable(ObservableList<Event> events, LocalDate initDate, int dayNum, TemporalField dayOfWeekTemporalField) {
-		super(events, initDate, dayOfWeekTemporalField);
+	public HourlyTimetable(LocalDate initDate, int dayNum, TemporalField dayOfWeekTemporalField) {
+		super(initDate, dayOfWeekTemporalField);
 		this.dayNum = dayNum;
 		//set grid dimensions
 		rowNum = (24*60)/TIME_INCREMENT;//5 min intervals;

@@ -8,6 +8,7 @@ import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 
+import javafx.collections.ListChangeListener;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -62,9 +63,31 @@ public class MainDisplayController {
 	
 	public void start(Stage primaryStage, CalendarModel cmodel) {
 		this.primaryStage = primaryStage;
-		//to get data for/from model
 		this.cmodel = cmodel;
+		//get current date to initialize everything
+		LocalDate today = LocalDate.now();
+		//create timetables
+		dayTimetable = new DayTimetable(today, dayOfWeekTemporalField);
+		weekTimetable = new WeekTimetable(today, dayOfWeekTemporalField);
+		monthTimetable = new MonthTimetable(today, dayOfWeekTemporalField);
+		yearTimetable = new YearTimetable(today, dayOfWeekTemporalField);
+		//init selectedtimetable var
+		selectedTimetable = dayTimetable;
+		//retrieve events and set listener to update selectedtimetable
 		events = cmodel.getEvents();
+		events.addListener((ListChangeListener<Event>) change -> {
+            while (change.next()) {
+                if (change.wasAdded()) {
+                	for (Event e : change.getAddedSubList()) {
+                		selectedTimetable.addEvent(e);
+                	}
+                } else if (change.wasRemoved()) {
+                    for (Event e : change.getRemoved()) {
+                    	selectedTimetable.removeEvent(e);
+                    }
+                }
+            }
+        });
 		//timetableDisplay width
 		timetableDisplay.setMinWidth(Timetable.WIDTH + PADDING);//later use getters of current grid
 		//default locale
@@ -73,26 +96,20 @@ public class MainDisplayController {
 		dayOfWeekTemporalField = WeekFields.of(localeSetting).dayOfWeek();
 		//set locale so calendar is appropriate for region
 		Locale.setDefault(localeSetting);
-		//get current date to initialize everything
-		LocalDate today = LocalDate.now();
 		//create and initialize datepicker
 		datePicker = new DatePicker(today);
 		datePicker.setShowWeekNumbers(false);
 		datePicker.valueProperty().addListener((selected,oldval,newval)->{
 			//System.out.println("datepicker listener called");
 			updateMonthYearLabel();
-			updateTimetable();
+			//update timetable
+			selectedTimetable.update(newval, events);
 		});
 		//extract visuals from datepicker
 		datePickerSkinPopupContent = new DatePickerSkin(datePicker).getPopupContent();
 		datePickerSkinPopupContent.setStyle("-fx-border-color: black;");
 		//add calendar display to left side of screen
 		calendarView.getChildren().add(0,datePickerSkinPopupContent);
-		//create timetables like dimensions, cells, etc
-		dayTimetable = new DayTimetable(events, today, dayOfWeekTemporalField);
-		weekTimetable = new WeekTimetable(events, today, dayOfWeekTemporalField);
-		monthTimetable = new MonthTimetable(events, today, dayOfWeekTemporalField);
-		yearTimetable = new YearTimetable(events, today, dayOfWeekTemporalField);
 		//populate combobox with timetables
 		timeUnitComboBox.getItems().addAll(dayTimetable, weekTimetable, monthTimetable, yearTimetable);
 		//add listener to timeUnitComboBox
@@ -102,7 +119,10 @@ public class MainDisplayController {
 			leftButton.setTooltip(new Tooltip("Previous " + newval));
 			rightButton.setTooltip(new Tooltip("Next " + newval));
 			updateMonthYearLabel();
-			updateTimetable();
+			//change timetable display
+			selectedTimetable = newval;//set selected timetable
+			selectedTimetable.update(getSelectedDate(), events);//update timetable itself
+			timetableDisplay.setContent(selectedTimetable.getView());//show updated timetable
 		});
 		//initialize timeunitcombobox to time unit "Day" (triggers its listener to init stuff)
 		timeUnitComboBox.getSelectionModel().select(0);
@@ -137,7 +157,7 @@ public class MainDisplayController {
 		//change calendarview which changes label
 		datePicker.setValue(currentDate);
 		//after date is changed, update current timetable
-		selectedTimetable.update(getSelectedDate());
+		selectedTimetable.update(getSelectedDate(), events);
 	}
 	//done?
 	@FXML
@@ -160,7 +180,7 @@ public class MainDisplayController {
 				break;
 		}
 		//after date is changed, update current timetable
-		selectedTimetable.update(getSelectedDate());
+		selectedTimetable.update(getSelectedDate(), events);
 	}
 	//done?
 	@FXML
@@ -183,14 +203,9 @@ public class MainDisplayController {
 				break;
 		}
 		//after date is changed, update current timetable
-		selectedTimetable.update(getSelectedDate());
+		selectedTimetable.update(getSelectedDate(), events);
 	}
-	//done? delegated timetable update to timetable classes
-	private void updateTimetable() {
-		selectedTimetable = getSelectedTimetable();//set selected timetable
-		selectedTimetable.update(getSelectedDate());//update timetable itself
-		timetableDisplay.setContent(selectedTimetable.getView());//show updated timetable
-	}
+	
 	private void updateMonthYearLabel() {
 		LocalDate date = getSelectedDate();
 		String timeUnit = getSelectedTimeUnit();

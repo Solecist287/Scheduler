@@ -2,14 +2,15 @@ package model;
 
 import java.time.LocalDate;
 import java.time.temporal.TemporalField;
+import java.util.List;
 
 import javafx.collections.ObservableList;
 import javafx.scene.Node;
 
 public class MonthTimetable extends Timetable {
 
-	public MonthTimetable(ObservableList<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
-		super(events, initDate, dayOfWeekTemporalField);
+	public MonthTimetable(LocalDate initDate, TemporalField dayOfWeekTemporalField) {
+		super(initDate, dayOfWeekTemporalField);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -19,7 +20,7 @@ public class MonthTimetable extends Timetable {
 	}
 
 	@Override
-	public void update(LocalDate date) {
+	public void update(LocalDate date, List<Event> events) {
 		// TODO Auto-generated method stub
 
 	}
@@ -27,6 +28,18 @@ public class MonthTimetable extends Timetable {
 	@Override
 	public String toString() {
 		return "Month";
+	}
+
+	@Override
+	public void addEvent(Event e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeEvent(Event e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

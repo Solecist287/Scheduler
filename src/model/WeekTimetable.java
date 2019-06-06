@@ -2,13 +2,14 @@ package model;
 
 import java.time.LocalDate;
 import java.time.temporal.TemporalField;
+import java.util.List;
 
 import javafx.collections.ObservableList;
 
 public class WeekTimetable extends HourlyTimetable {
 
-	public WeekTimetable(ObservableList<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
-		super(events, initDate, 7, dayOfWeekTemporalField);
+	public WeekTimetable(LocalDate initDate, TemporalField dayOfWeekTemporalField) {
+		super(initDate, 7, dayOfWeekTemporalField);
 	}
 	
 	//cannot be static as long as temporalfield needs to be instantiated
@@ -23,7 +24,7 @@ public class WeekTimetable extends HourlyTimetable {
 	}
 	
 	@Override
-	public void update(LocalDate date) {
+	public void update(LocalDate date, List<Event> events) {
 		//only do render new week if date is in another week than lastDateEntered
 		if (!inTheSameWeek(lastDateEntered, date)) {
 			//logic
@@ -34,6 +35,18 @@ public class WeekTimetable extends HourlyTimetable {
 	@Override
 	public String toString() {
 		return "Week";
+	}
+
+	@Override
+	public void addEvent(Event e) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void removeEvent(Event e) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
