@@ -3,10 +3,12 @@ package controller;
 import javafx.scene.control.ScrollPane;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.TemporalField;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -19,10 +21,12 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.skin.DatePickerSkin;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.CalendarModel;
 import model.DayTimetable;
+import model.Event;
 import model.MonthTimetable;
 import model.Timetable;
 import model.WeekTimetable;
@@ -45,6 +49,7 @@ public class MainDisplayController {
 	private Timetable dayTimetable, weekTimetable, monthTimetable, yearTimetable, selectedTimetable;
 	
 	private CalendarModel cmodel;
+	private ObservableList<Event> events; 
 	
 	private Stage primaryStage;
 	
@@ -59,6 +64,7 @@ public class MainDisplayController {
 		this.primaryStage = primaryStage;
 		//to get data for/from model
 		this.cmodel = cmodel;
+		events = cmodel.getEvents();
 		//timetableDisplay width
 		timetableDisplay.setMinWidth(Timetable.WIDTH + PADDING);//later use getters of current grid
 		//default locale
@@ -83,10 +89,10 @@ public class MainDisplayController {
 		//add calendar display to left side of screen
 		calendarView.getChildren().add(0,datePickerSkinPopupContent);
 		//create timetables like dimensions, cells, etc
-		dayTimetable = new DayTimetable(cmodel, today, dayOfWeekTemporalField);
-		weekTimetable = new WeekTimetable(cmodel, today, dayOfWeekTemporalField);
-		monthTimetable = new MonthTimetable(cmodel, today, dayOfWeekTemporalField);
-		yearTimetable = new YearTimetable(cmodel, today, dayOfWeekTemporalField);
+		dayTimetable = new DayTimetable(events, today, dayOfWeekTemporalField);
+		weekTimetable = new WeekTimetable(events, today, dayOfWeekTemporalField);
+		monthTimetable = new MonthTimetable(events, today, dayOfWeekTemporalField);
+		yearTimetable = new YearTimetable(events, today, dayOfWeekTemporalField);
 		//populate combobox with timetables
 		timeUnitComboBox.getItems().addAll(dayTimetable, weekTimetable, monthTimetable, yearTimetable);
 		//add listener to timeUnitComboBox
@@ -100,7 +106,6 @@ public class MainDisplayController {
 		});
 		//initialize timeunitcombobox to time unit "Day" (triggers its listener to init stuff)
 		timeUnitComboBox.getSelectionModel().select(0);
-		selectedTimetable = dayTimetable;
 	}
 	public void stop() {}
 	//observable list would handle updating the timetable current view
@@ -115,7 +120,7 @@ public class MainDisplayController {
 		GridPane root = (GridPane)loader.load();
 		//retrieve and start up controller
 		AddEventPopupController addEventPopupController = loader.getController();
-		addEventPopupController.start(popupStage, cmodel);
+		addEventPopupController.start(popupStage, cmodel, events);
 		//set up stage
 		popupStage.initModality(Modality.APPLICATION_MODAL);
 		popupStage.initOwner(primaryStage);
@@ -125,7 +130,6 @@ public class MainDisplayController {
 		popupStage.centerOnScreen();
 		popupStage.show();
 	}
-	
 	@FXML
 	public void setToToday() {
 		//get today's date
@@ -135,7 +139,6 @@ public class MainDisplayController {
 		//after date is changed, update current timetable
 		selectedTimetable.update(getSelectedDate());
 	}
-	
 	//done?
 	@FXML
 	public void setToPrevTimeUnit() {
@@ -182,12 +185,11 @@ public class MainDisplayController {
 		//after date is changed, update current timetable
 		selectedTimetable.update(getSelectedDate());
 	}
-	
 	//done? delegated timetable update to timetable classes
 	private void updateTimetable() {
 		selectedTimetable = getSelectedTimetable();//set selected timetable
 		selectedTimetable.update(getSelectedDate());//update timetable itself
-		timetableDisplay.setContent(getSelectedView());//show updated timetable
+		timetableDisplay.setContent(selectedTimetable.getView());//show updated timetable
 	}
 	private void updateMonthYearLabel() {
 		LocalDate date = getSelectedDate();

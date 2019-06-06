@@ -10,6 +10,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+
 public class CalendarModel implements Serializable {
 
 	public static final String storeDir = "./data";
@@ -21,8 +24,8 @@ public class CalendarModel implements Serializable {
 	public CalendarModel() {
 		events = new ArrayList<Event>();
 	}
-	public List<Event> getEvents(){
-		return events;
+	public ObservableList<Event> getEvents(){
+		return FXCollections.observableList(events);
 	}
 	public static void writeData(CalendarModel cmodel){
 		try{

@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
@@ -32,13 +33,16 @@ public class AddEventPopupController {
 	Button saveButton;
 	
 	private CalendarModel cmodel;
+	private ObservableList<Event> events;
 	private Stage primaryStage;
 	private int comboBoxWidth = 77;//specific, but perfectly fits time choices
 	private final int TIME_INCREMENT = 5;
 	
-	public void start(Stage primaryStage, CalendarModel cmodel) {
+	public void start(Stage primaryStage, CalendarModel cmodel, ObservableList<Event> events) {
 		this.primaryStage = primaryStage;
-		this.cmodel = cmodel;LocalTime t = LocalTime.MIDNIGHT;
+		this.cmodel = cmodel;
+		this.events = events;
+		LocalTime t = LocalTime.MIDNIGHT;
 		//fill ComboBoxes with time choices for event
 		do {
 			startTimeComboBox.getItems().add(t);
@@ -74,7 +78,6 @@ public class AddEventPopupController {
 		//create event object
 		Event newEvent = new Event(title, description, startDateTime, endDateTime, color);
 		//check where to place event and do no insert if it collides with other event(s)
-		List<Event> events = cmodel.getEvents();
 		if (events.size() == 0) {//easy case: insert in empty list
 			events.add(newEvent);
 			cmodel.printEvents();

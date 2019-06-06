@@ -83,5 +83,11 @@ public class Event implements Serializable{
 	public void setBackgroundColor(Color backgroundColor) {
 		this.backgroundColor = backgroundColor;
 	}
+	
+	public boolean equals(Object o) {
+		if (o==null||!(o instanceof Event)) {return false;}
+		Event other = (Event)o;
+		return this.getStartDateTime().equals(other.getStartDateTime());//can assume just start for now
+	}
 }
 

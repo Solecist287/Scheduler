@@ -2,8 +2,10 @@ package model;
 
 import java.time.LocalDate;
 import java.time.temporal.TemporalField;
+import java.util.ArrayList;
+import java.util.List;
 
-import javafx.scene.Node;
+import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -15,22 +17,18 @@ public abstract class HourlyTimetable extends Timetable {
 	final int TIME_LABEL_WIDTH = 42;
 	int rowNum, rowSize, colNum, colSize, dayNum;
 	GridPane hourlyGrid;
-	
-	public HourlyTimetable(CalendarModel cmodel, LocalDate initDate, int dayNum, TemporalField dayOfWeekTemporalField) {
-		super(cmodel, initDate, dayOfWeekTemporalField);
+	List<Timeslot> timeslots;
+	public HourlyTimetable(ObservableList<Event> events, LocalDate initDate, int dayNum, TemporalField dayOfWeekTemporalField) {
+		super(events, initDate, dayOfWeekTemporalField);
 		this.dayNum = dayNum;
 		//set grid dimensions
 		rowNum = (24*60)/TIME_INCREMENT;//5 min intervals;
 		rowSize = TIME_INCREMENT; 
 		colNum = dayNum + 1;//first is time label column
 		colSize = (WIDTH-TIME_LABEL_WIDTH)/dayNum;
-		//create view
-		view = createView();
-	}
-
-	@Override
-	public Node createView() {
+		//create grid
 		hourlyGrid = new GridPane();
+		//add constraints for hourly grid
 		//set column and row constraints
 		for (int i = 0; i < colNum; i++) {
 			int ccSize = (i == 0) ? TIME_LABEL_WIDTH : colSize;
@@ -39,7 +37,17 @@ public abstract class HourlyTimetable extends Timetable {
 		for (int i = 0; i < rowNum; i++) {
 			hourlyGrid.getRowConstraints().add(new RowConstraints(rowSize));
 		}
-		//draw and set initial values for timetable
+		//then add listener for changing grid
+		//create view
+		createView();
+		timeslots = new ArrayList<Timeslot>();
+	}
+
+	@Override
+	public void createView() {
+		//clear everything
+		hourlyGrid.getChildren().clear();
+		//re-add everything
 		for (int i = 0; i < colNum; i++) {
 			for (int j = 0; j < rowNum; j++) {
 				Pane p = new Pane();//will not be used for first column since we use hour labels
@@ -89,6 +97,7 @@ public abstract class HourlyTimetable extends Timetable {
 				}
 			}
 		}
-		return hourlyGrid;
+		
+		view = hourlyGrid;//change later when more complicated
 	}
 }

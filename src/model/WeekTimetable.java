@@ -3,10 +3,12 @@ package model;
 import java.time.LocalDate;
 import java.time.temporal.TemporalField;
 
+import javafx.collections.ObservableList;
+
 public class WeekTimetable extends HourlyTimetable {
 
-	public WeekTimetable(CalendarModel cmodel, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
-		super(cmodel, initDate, 7, dayOfWeekTemporalField);
+	public WeekTimetable(ObservableList<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
+		super(events, initDate, 7, dayOfWeekTemporalField);
 	}
 	
 	//cannot be static as long as temporalfield needs to be instantiated
