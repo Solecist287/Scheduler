@@ -12,8 +12,8 @@ public class Event implements Serializable{
 	private static final long serialVersionUID = 1175616276017341271L;
 	private String title, description;
 	private LocalDateTime startDateTime, endDateTime;
-	private Color backgroundColor;
-	
+	private double red, green, blue;
+	private final double opacity = 0;
 	//minimal constructor
 	public Event(String title, String description, LocalDateTime startDateTime, 
 			LocalDateTime endDateTime, Color backgroundColor) {
@@ -21,7 +21,9 @@ public class Event implements Serializable{
 		this.setDescription(description);
 		this.setStartDateTime(startDateTime);
 		this.setEndDateTime(endDateTime);
-		this.setBackgroundColor(backgroundColor);
+		red = backgroundColor.getRed();
+		green = backgroundColor.getGreen();
+		blue = backgroundColor.getBlue();
 	}
 	
 	public boolean isBefore(Event other) {
@@ -77,11 +79,7 @@ public class Event implements Serializable{
 	}
 
 	public Color getBackgroundColor() {
-		return backgroundColor;
-	}
-	
-	public void setBackgroundColor(Color backgroundColor) {
-		this.backgroundColor = backgroundColor;
+		return new Color(red, green, blue, opacity);
 	}
 	
 	public boolean equals(Object o) {

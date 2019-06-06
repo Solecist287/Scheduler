@@ -1,5 +1,6 @@
 package controller;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -75,7 +76,7 @@ public class AddEventPopupController {
 		if (startDateTime.isAfter(endDateTime) || startDateTime.equals(endDateTime) ||
 				!startDateTime.toLocalDate().equals(endDateTime.toLocalDate())) {return;}
 		//make sure event is not <30 min
-		if (endDateTime.getMinute() - startDateTime.getMinute() < MIN_EVENT_TIME) {
+		if (Duration.between(startDateTime, endDateTime).toMinutes() < MIN_EVENT_TIME) {
 			System.out.println("too short: difference is: " +  (endDateTime.getMinute() - startDateTime.getMinute()));
 			return;
 		}

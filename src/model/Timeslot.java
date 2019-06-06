@@ -13,7 +13,7 @@ public class Timeslot {
 		Color c = e.getBackgroundColor();
 		h = new HBox();
 		h.setStyle("-fx-background-color: rgb(" + c.getRed()*255 + "," + c.getGreen()*255 + "," + c.getBlue()*255 + ");"
-				+ "-fx-border-color: black;");
+				+ "-fx-border-color: black;" /*+ "-fx-border-width: 1 0 1 1"*/);
 		
 		//label: "starttime am/pm - endtime am/pm"
 		/*
