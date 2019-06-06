@@ -64,15 +64,6 @@ public class MainDisplayController {
 	public void start(Stage primaryStage, CalendarModel cmodel) {
 		this.primaryStage = primaryStage;
 		this.cmodel = cmodel;
-		//get current date to initialize everything
-		LocalDate today = LocalDate.now();
-		//create timetables
-		dayTimetable = new DayTimetable(today, dayOfWeekTemporalField);
-		weekTimetable = new WeekTimetable(today, dayOfWeekTemporalField);
-		monthTimetable = new MonthTimetable(today, dayOfWeekTemporalField);
-		yearTimetable = new YearTimetable(today, dayOfWeekTemporalField);
-		//init selectedtimetable var
-		selectedTimetable = dayTimetable;
 		//retrieve events and set listener to update selectedtimetable
 		events = cmodel.getEvents();
 		events.addListener((ListChangeListener<Event>) change -> {
@@ -96,6 +87,8 @@ public class MainDisplayController {
 		dayOfWeekTemporalField = WeekFields.of(localeSetting).dayOfWeek();
 		//set locale so calendar is appropriate for region
 		Locale.setDefault(localeSetting);
+		//get current date to initialize everything
+		LocalDate today = LocalDate.now();
 		//create and initialize datepicker
 		datePicker = new DatePicker(today);
 		datePicker.setShowWeekNumbers(false);
@@ -110,6 +103,11 @@ public class MainDisplayController {
 		datePickerSkinPopupContent.setStyle("-fx-border-color: black;");
 		//add calendar display to left side of screen
 		calendarView.getChildren().add(0,datePickerSkinPopupContent);
+		//create timetables
+		dayTimetable = new DayTimetable(today, dayOfWeekTemporalField);
+		weekTimetable = new WeekTimetable(today, dayOfWeekTemporalField);
+		monthTimetable = new MonthTimetable(today, dayOfWeekTemporalField);
+		yearTimetable = new YearTimetable(today, dayOfWeekTemporalField);
 		//populate combobox with timetables
 		timeUnitComboBox.getItems().addAll(dayTimetable, weekTimetable, monthTimetable, yearTimetable);
 		//add listener to timeUnitComboBox
