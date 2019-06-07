@@ -42,7 +42,6 @@ public class MainDisplayController {
 	Label monthYearLabel;
 	@FXML
 	Button leftButton, rightButton;
-	
 	//all the timetable views
 	//may not need to save day/week/month/yeartimetables to vars
 	private Timetable dayTimetable, weekTimetable, monthTimetable, yearTimetable, selectedTimetable;
