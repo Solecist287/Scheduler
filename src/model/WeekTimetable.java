@@ -17,9 +17,6 @@ public class WeekTimetable extends HourlyTimetable {
 		//set endpoints before and after week of firstDate
 		LocalDate beforeStartOfWeek = firstDate.with(dayOfWeekTemporalField,1).minusDays(1);
 		LocalDate afterEndOfWeek = firstDate.with(dayOfWeekTemporalField,7).plusDays(1);
-		//return whether or not secondDate is in week of firstDate
-		//System.out.println("firstDate: " + firstDate + ", secondDate: " + secondDate + 
-		//		"bool: " + (secondDate.isAfter(beforeStartOfWeek) && secondDate.isBefore(afterEndOfWeek)));
 		return secondDate.isAfter(beforeStartOfWeek) && secondDate.isBefore(afterEndOfWeek);
 	}
 	

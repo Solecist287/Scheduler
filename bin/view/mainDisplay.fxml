@@ -14,34 +14,45 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.text.Text?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.TextFlow?>
 <?import javafx.geometry.Insets?>
 
 <BorderPane
 	xmlns:fx="http://javafx.com/fxml/1"
 	fx:id="mainDisplay"
 	fx:controller="controller.MainDisplayController"
-	style="-fx-background-color: #DEDEDE">
-	<padding>
-			<Insets bottom="10.0" left="0.0" right="10.0" top="0.0"/>
-		</padding>
+	style="-fx-background-color: #dae3e5">
+	
 	<top>
-		<HBox spacing="10" alignment="CENTER">
+		<BorderPane  
+			style="-fx-background-color: #869193; -fx-border-color: black; -fx-border-width: 0 0 1 0">
 			<padding>
-				<Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
+				<Insets bottom="10.0" left="50.0" right="50.0" top="10.0"/>
 			</padding>
-			<children>
-				<Button fx:id="todayButton" text="Today" onAction="#setToToday" style="-fx-border-color: black"/>
-				<Button fx:id="leftButton" text="&lt;" onAction="#setToPrevTimeUnit" style="-fx-border-color: black"/>
-				<Button fx:id="rightButton" text="&gt;" onAction="#setToNextTimeUnit" style="-fx-border-color: black"/>
-				<Label fx:id="monthYearLabel" text=""/>
-				<ComboBox fx:id="timeUnitComboBox" promptText="time unit" style="-fx-border-color: black"/>
-			</children>
-		</HBox>
+				<left>
+					<HBox spacing="10.0">
+						<Button fx:id="todayButton" text="Today" onAction="#setToToday" style="-fx-border-color: black"/>
+						<Button fx:id="leftButton" text="&lt;" onAction="#setToPrevTimeUnit" style="-fx-border-color: black"/>
+						<Button fx:id="rightButton" text="&gt;" onAction="#setToNextTimeUnit" style="-fx-border-color: black"/>
+					</HBox>
+				</left>
+				<center>
+					<Label fx:id="monthYearLabel" text="">
+						<font>
+							<Font name="Bold" size="20"/>
+						</font>
+					</Label>
+				</center>
+				<right>
+					<ComboBox fx:id="timeUnitComboBox" promptText="time unit" style="-fx-border-color: black"/>
+				</right>
+		</BorderPane>
 	</top>
 	<left>
 		<VBox fx:id="calendarView">
 			<padding>
-				<Insets bottom="10.0" left="10.0" right="10.0" top="0.0"/>
+				<Insets bottom="10.0" left="10.0" right="10.0" top="10.0"/>
 			</padding>
 			<HBox alignment="BASELINE_RIGHT">
 				<Button fx:id="addEventButton" text="+ Event" onAction="#addEventPopup" style="-fx-border-color: black"/>
@@ -49,7 +60,12 @@
 		</VBox>
 	</left>
 	<right>
-		<ScrollPane fx:id="timetableDisplay" prefHeight="500"/>
+		<VBox>
+			<padding>
+				<Insets bottom="10.0" left="0.0" right="10.0" top="10.0"/>
+			</padding>
+			<ScrollPane fx:id="timetableDisplay" prefHeight="500"/>
+		</VBox>
 	</right>
 </BorderPane>
 

@@ -55,8 +55,7 @@ public abstract class HourlyTimetable extends Timetable {
 					if (j%12==0){//show only top border otherwise
 						String period = (j/12)<12 ? "am" : "pm";
 						int hour = ((j/12)%12==0) ? 12 : (j/12)%12;//converts hour from military to 12-hour time
-						//System.out.println(j + ": " + hour + " " + period);
-						Label hourLabel = new Label(hour + period);
+						Label hourLabel = new Label(" " + hour + period);
 						hourLabel.setMinHeight(rowSize*2);
 						hourLabel.setMinWidth(colSize);
 						hourLabel.setStyle(defaultStyle + "-fx-border-width: 1 0 0 1;");
