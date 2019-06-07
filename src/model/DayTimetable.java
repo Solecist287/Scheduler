@@ -12,10 +12,8 @@ public class DayTimetable extends HourlyTimetable {
 
 	@Override
 	public void update(LocalDate date, List<Event> events) {
-		//recreate view
-		createView();
-		//clear timeslots
-		timeslots.clear();
+		//clear timeslots from list and hourlygrid
+		clearTimeslots();
 		//draw events that match date
 		for (int i = 0; i < events.size(); i++) {
 			Event e = events.get(i);

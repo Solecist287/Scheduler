@@ -99,4 +99,12 @@ public abstract class HourlyTimetable extends Timetable {
 		
 		view = hourlyGrid;//change later when more complicated
 	}
+	//removes timeslots from list and from hourlygrid
+	public void clearTimeslots() {
+		//remove timeslot nodes from hourlygrid
+		for (int i = 0; i < timeslots.size(); i++) {
+			hourlyGrid.getChildren().remove(timeslots.get(i).getView());
+		}
+		timeslots.clear();
+	}
 }

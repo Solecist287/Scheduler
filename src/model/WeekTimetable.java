@@ -25,8 +25,8 @@ public class WeekTimetable extends HourlyTimetable {
 	public void update(LocalDate date, List<Event> events) {
 		//only do render new week if date is in another week than lastDateEntered
 		if (!inTheSameWeek(lastDateEntered, date)) {
-			createView();
-			timeslots.clear();
+			//clear timeslots from list and hourlygrid
+			clearTimeslots();
 			LocalDate startOfWeek = date.with(dayOfWeekTemporalField,1);
 			LocalDate endOfWeek = date.with(dayOfWeekTemporalField,7);
 			for (int i = 0; i < events.size(); i++) {
