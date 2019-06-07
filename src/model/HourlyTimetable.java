@@ -5,6 +5,7 @@ import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.List;
 
+import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
@@ -17,8 +18,8 @@ public abstract class HourlyTimetable extends Timetable {
 	int rowNum, rowSize, colNum, colSize, dayNum;
 	GridPane hourlyGrid;
 	List<Timeslot> timeslots;
-	public HourlyTimetable(LocalDate initDate, int dayNum, TemporalField dayOfWeekTemporalField) {
-		super(initDate, dayOfWeekTemporalField);
+	public HourlyTimetable(List<Event> events, LocalDate initDate, int dayNum, TemporalField dayOfWeekTemporalField) {
+		super(events, initDate, dayOfWeekTemporalField);
 		this.dayNum = dayNum;
 		//set grid dimensions
 		rowNum = (24*60)/TIME_INCREMENT;//5 min intervals;
@@ -44,9 +45,7 @@ public abstract class HourlyTimetable extends Timetable {
 
 	@Override
 	public void createView() {
-		//clear everything
-		hourlyGrid.getChildren().clear();
-		//re-add everything
+		//draw tiles
 		for (int i = 0; i < colNum; i++) {
 			for (int j = 0; j < rowNum; j++) {
 				Pane p = new Pane();//will not be used for first column since we use hour labels
@@ -96,7 +95,6 @@ public abstract class HourlyTimetable extends Timetable {
 				}
 			}
 		}
-		
 		view = hourlyGrid;//change later when more complicated
 	}
 	//removes timeslots from list and from hourlygrid

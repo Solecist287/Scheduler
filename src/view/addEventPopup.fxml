@@ -31,14 +31,13 @@
 		<TextField GridPane.rowIndex="0" fx:id="titleTextField" promptText="Add Title"/>
 		<HBox GridPane.rowIndex="1" spacing="10">
 			<children>
-				<DatePicker fx:id="startDatePicker"/>
+				<DatePicker fx:id="datePicker"/>
 				<ComboBox fx:id="startTimeComboBox"/>
 				<Text text="-">
 					<font>
 						<Font name="Times New Roman" size="24"/>
 					</font>
 				</Text>
-				<DatePicker fx:id="endDatePicker"/>
 				<ComboBox fx:id="endTimeComboBox"/>
 			</children>
 		</HBox>

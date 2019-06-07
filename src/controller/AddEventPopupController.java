@@ -22,7 +22,7 @@ public class AddEventPopupController {
 	@FXML
 	TextField titleTextField;
 	@FXML
-	DatePicker startDatePicker, endDatePicker;
+	DatePicker datePicker;
 	@FXML
 	ComboBox<LocalTime> startTimeComboBox, endTimeComboBox;
 	@FXML
@@ -38,7 +38,7 @@ public class AddEventPopupController {
 	private int comboBoxWidth = 77;//specific, but perfectly fits time choices
 	private final int TIME_INCREMENT = 5;
 	private final int MIN_EVENT_TIME = 35;
-	public void start(Stage primaryStage, CalendarModel cmodel, ObservableList<Event> events) {
+	public void start(Stage primaryStage, CalendarModel cmodel, ObservableList<Event> events, LocalDate initDate) {
 		this.primaryStage = primaryStage;
 		this.cmodel = cmodel;
 		this.events = events;
@@ -54,10 +54,8 @@ public class AddEventPopupController {
 		endTimeComboBox.setStyle("-fx-pref-width: " + comboBoxWidth);
 		//set default values
 		titleTextField.setText("Event Title");
-		startDatePicker.setValue(LocalDate.now());
-		startDatePicker.setShowWeekNumbers(false);
-		endDatePicker.setValue(LocalDate.now());
-		endDatePicker.setShowWeekNumbers(false);
+		datePicker.setValue(initDate);
+		datePicker.setShowWeekNumbers(false);
 		startTimeComboBox.getSelectionModel().select(0);
 		endTimeComboBox.getSelectionModel().select(0);
 	}
@@ -67,8 +65,8 @@ public class AddEventPopupController {
 		//fields for event object
 		String title = titleTextField.getText();
 		String description = descriptionTextArea.getText();
-		LocalDateTime startDateTime = LocalDateTime.of(startDatePicker.getValue(), startTimeComboBox.getValue());
-		LocalDateTime endDateTime = LocalDateTime.of(endDatePicker.getValue(), endTimeComboBox.getValue());
+		LocalDateTime startDateTime = LocalDateTime.of(datePicker.getValue(), startTimeComboBox.getValue());
+		LocalDateTime endDateTime = LocalDateTime.of(datePicker.getValue(), endTimeComboBox.getValue());
 		Color color = backgroundColorPicker.getValue();
 		//check if title is empty
 		if (title.isEmpty() || title == null) {return;}

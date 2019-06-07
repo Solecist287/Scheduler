@@ -9,8 +9,8 @@ import javafx.scene.Node;
 
 public class MonthTimetable extends Timetable {
 
-	public MonthTimetable(LocalDate initDate, TemporalField dayOfWeekTemporalField) {
-		super(initDate, dayOfWeekTemporalField);
+	public MonthTimetable(List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
+		super(events, initDate, dayOfWeekTemporalField);
 		// TODO Auto-generated constructor stub
 	}
 
@@ -20,7 +20,7 @@ public class MonthTimetable extends Timetable {
 	}
 
 	@Override
-	public void update(LocalDate date, List<Event> events) {
+	public void update(LocalDate date) {
 		// TODO Auto-generated method stub
 
 	}

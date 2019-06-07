@@ -4,10 +4,13 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalField;
 import java.util.List;
 
+import javafx.collections.ObservableList;
+import javafx.scene.Node;
+
 public class WeekTimetable extends HourlyTimetable {
 
-	public WeekTimetable(LocalDate initDate, TemporalField dayOfWeekTemporalField) {
-		super(initDate, 7, dayOfWeekTemporalField);
+	public WeekTimetable(List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
+		super(events, initDate, 7, dayOfWeekTemporalField);
 	}
 	
 	//cannot be static as long as temporalfield needs to be instantiated
@@ -22,7 +25,7 @@ public class WeekTimetable extends HourlyTimetable {
 	}
 	
 	@Override
-	public void update(LocalDate date, List<Event> events) {
+	public void update(LocalDate date) {
 		//only do render new week if date is in another week than lastDateEntered
 		if (!inTheSameWeek(lastDateEntered, date)) {
 			//clear timeslots from list and hourlygrid
@@ -40,6 +43,10 @@ public class WeekTimetable extends HourlyTimetable {
 					//System.out.println("weekIndex: " + weekIndex);
 					Timeslot t = new Timeslot(e);
 					timeslots.add(t);
+					t.getView().setOnMouseClicked(event -> {
+						System.out.println("deleted: " + t.getEvent().getStartDateTime());
+						events.remove(e);
+					});
 					hourlyGrid.add(t.getView(), weekIndex, e.getRow(), 1, e.getRowSpan());
 					//hourlyGrid.getChildren().remove(p);
 				}
@@ -54,7 +61,12 @@ public class WeekTimetable extends HourlyTimetable {
 			int weekIndex = e.getStartDateTime().get(dayOfWeekTemporalField);
 			Timeslot t = new Timeslot(e);
 			timeslots.add(t);
-			hourlyGrid.add(t.getView(), weekIndex, e.getRow(), 1, e.getRowSpan());
+			Node view = t.getView();
+			view.setOnMouseClicked(event -> {
+				System.out.println("deleted: " + t.getEvent().getStartDateTime());
+				events.remove(e);
+			});
+			hourlyGrid.add(view, weekIndex, e.getRow(), 1, e.getRowSpan());
 		}
 	}
 

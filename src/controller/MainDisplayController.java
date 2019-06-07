@@ -100,7 +100,7 @@ public class MainDisplayController {
 			//System.out.println("datepicker listener called");
 			updateMonthYearLabel();
 			//update timetable
-			selectedTimetable.update(newval, events);
+			selectedTimetable.update(newval);
 		});
 		//extract visuals from datepicker
 		datePickerSkinPopupContent = new DatePickerSkin(datePicker).getPopupContent();
@@ -108,10 +108,10 @@ public class MainDisplayController {
 		//add calendar display to left side of screen
 		calendarView.getChildren().add(0,datePickerSkinPopupContent);
 		//create timetables
-		dayTimetable = new DayTimetable(today, dayOfWeekTemporalField);
-		weekTimetable = new WeekTimetable(today, dayOfWeekTemporalField);
-		monthTimetable = new MonthTimetable(today, dayOfWeekTemporalField);
-		yearTimetable = new YearTimetable(today, dayOfWeekTemporalField);
+		dayTimetable = new DayTimetable(events, today, dayOfWeekTemporalField);
+		weekTimetable = new WeekTimetable(events, today, dayOfWeekTemporalField);
+		monthTimetable = new MonthTimetable(events, today, dayOfWeekTemporalField);
+		yearTimetable = new YearTimetable(events, today, dayOfWeekTemporalField);
 		//populate combobox with timetables
 		timeUnitComboBox.getItems().addAll(dayTimetable, weekTimetable, monthTimetable, yearTimetable);
 		//add listener to timeUnitComboBox
@@ -123,7 +123,7 @@ public class MainDisplayController {
 			updateMonthYearLabel();
 			//change timetable display
 			selectedTimetable = newval;//set selected timetable
-			selectedTimetable.update(getSelectedDate(), events);//update timetable itself
+			selectedTimetable.update(getSelectedDate());//update timetable itself
 			timetableDisplay.setContent(selectedTimetable.getView());//show updated timetable
 		});
 		//initialize timeunitcombobox to time unit "Day" (triggers its listener to init stuff)
@@ -142,7 +142,7 @@ public class MainDisplayController {
 		GridPane root = (GridPane)loader.load();
 		//retrieve and start up controller
 		AddEventPopupController addEventPopupController = loader.getController();
-		addEventPopupController.start(popupStage, cmodel, events);
+		addEventPopupController.start(popupStage, cmodel, events, datePicker.getValue());
 		//set up stage
 		popupStage.initModality(Modality.APPLICATION_MODAL);
 		popupStage.initOwner(primaryStage);
@@ -159,7 +159,7 @@ public class MainDisplayController {
 		//change calendarview which changes label
 		datePicker.setValue(currentDate);
 		//after date is changed, update current timetable
-		selectedTimetable.update(getSelectedDate(), events);
+		selectedTimetable.update(getSelectedDate());
 	}
 	//done?
 	@FXML
@@ -182,7 +182,7 @@ public class MainDisplayController {
 				break;
 		}
 		//after date is changed, update current timetable
-		selectedTimetable.update(getSelectedDate(), events);
+		selectedTimetable.update(getSelectedDate());
 	}
 	//done?
 	@FXML
@@ -205,7 +205,7 @@ public class MainDisplayController {
 				break;
 		}
 		//after date is changed, update current timetable
-		selectedTimetable.update(getSelectedDate(), events);
+		selectedTimetable.update(getSelectedDate());
 	}
 	
 	private void updateMonthYearLabel() {
