@@ -1,19 +1,27 @@
 package model;
 
+import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.TemporalField;
 import java.util.List;
 
+import controller.ModifyEventPopupController;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.collections.ObservableList;
+import javafx.scene.Scene;
+import javafx.scene.layout.GridPane;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 
 public abstract class Timetable {
+	Stage mainStage;
 	public List<Event> events;
 	Node view;
 	TemporalField dayOfWeekTemporalField;
 	public static final int WIDTH = 742;
 	LocalDate lastDateEntered;//highlighted date, if applicable
-	public Timetable(List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
+	public Timetable(Stage mainStage, List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
+		this.mainStage = mainStage;
 		this.events = events;
 		lastDateEntered = initDate;
 		this.dayOfWeekTemporalField = dayOfWeekTemporalField;
@@ -29,5 +37,30 @@ public abstract class Timetable {
 	public abstract void addEvent(Event e);
 	//removes timeslot if event is in same timeunit
 	public abstract void removeEvent(Event e);
+	//called when event is clicked on
+	public void modifyEventPopup(Event e){
+		//create popup stage
+		Stage popupStage = new Stage();
+		//FXML stuff
+		FXMLLoader loader = new FXMLLoader();
+		loader.setLocation(getClass().getResource("/view/modifyEventPopup.fxml"));
+		try {
+			//content of fxml file
+			GridPane root = (GridPane)loader.load();
+			//retrieve and start up controller
+			ModifyEventPopupController modifyEventPopupController = loader.getController();
+			modifyEventPopupController.start(popupStage, events, e);
+			//set up stage
+			popupStage.initModality(Modality.APPLICATION_MODAL);
+			popupStage.initOwner(mainStage);
+			popupStage.setScene(new Scene(root));
+			popupStage.setTitle("Modify event");
+			popupStage.setResizable(false);
+			popupStage.centerOnScreen();
+			popupStage.show();
+		}catch(IOException ex) {
+			ex.printStackTrace();
+		}
+	}
 	public abstract String toString();//displays text for timeunitcombobox
 }

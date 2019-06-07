@@ -3,14 +3,13 @@ package model;
 import java.time.LocalDate;
 import java.time.temporal.TemporalField;
 import java.util.List;
-
-import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.stage.Stage;
 
 public class DayTimetable extends HourlyTimetable {
 
-	public DayTimetable(List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
-		super(events, initDate, 1, dayOfWeekTemporalField);
+	public DayTimetable(Stage mainStage, List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
+		super(mainStage, events, initDate, 1, dayOfWeekTemporalField);
 	}
 
 	@Override
@@ -26,14 +25,7 @@ public class DayTimetable extends HourlyTimetable {
 					break;//stop searching
 				//add events on this input date
 				}else if (e.getStartDateTime().toLocalDate().equals(date)) {
-					Timeslot t = new Timeslot(e);
-					timeslots.add(t);
-					t.getView().setOnMouseClicked(event -> {
-						System.out.println("deleted: " + t.getEvent().getStartDateTime());
-						events.remove(e);
-					});
-					hourlyGrid.add(t.getView(), 1, e.getRow(), 1, e.getRowSpan());
-					//hourlyGrid.getChildren().remove(p);
+					addTimeslot(e);
 				}
 			}
 		}
@@ -43,14 +35,7 @@ public class DayTimetable extends HourlyTimetable {
 	@Override
 	public void addEvent(Event e) {
 		if (e.getStartDateTime().toLocalDate().equals(lastDateEntered)) {
-			Timeslot t = new Timeslot(e);
-			timeslots.add(t);
-			Node view = t.getView();
-			view.setOnMouseClicked(event -> {
-				System.out.println("deleted: " + t.getEvent().getStartDateTime());
-				events.remove(e);
-			});
-			hourlyGrid.add(view, 1, e.getRow(), 1, e.getRowSpan());
+			addTimeslot(e);
 		}
 	}
 
@@ -71,5 +56,16 @@ public class DayTimetable extends HourlyTimetable {
 	@Override
 	public String toString() {
 		return "Day";
+	}
+
+	@Override
+	public void addTimeslot(Event e) {
+		Timeslot t = new Timeslot(e);
+		timeslots.add(t);
+		Node view = t.getView();
+		view.setOnMouseClicked(event -> {
+			modifyEventPopup(e);
+		});
+		hourlyGrid.add(view, 1, e.getRow(), 1, e.getRowSpan());
 	}
 }

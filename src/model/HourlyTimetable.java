@@ -4,13 +4,12 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.List;
-
-import javafx.collections.ObservableList;
 import javafx.scene.control.Label;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
+import javafx.stage.Stage;
 
 public abstract class HourlyTimetable extends Timetable {
 	final int TIME_INCREMENT = 5;
@@ -18,8 +17,8 @@ public abstract class HourlyTimetable extends Timetable {
 	int rowNum, rowSize, colNum, colSize, dayNum;
 	GridPane hourlyGrid;
 	List<Timeslot> timeslots;
-	public HourlyTimetable(List<Event> events, LocalDate initDate, int dayNum, TemporalField dayOfWeekTemporalField) {
-		super(events, initDate, dayOfWeekTemporalField);
+	public HourlyTimetable(Stage mainStage, List<Event> events, LocalDate initDate, int dayNum, TemporalField dayOfWeekTemporalField) {
+		super(mainStage, events, initDate, dayOfWeekTemporalField);
 		this.dayNum = dayNum;
 		//set grid dimensions
 		rowNum = (24*60)/TIME_INCREMENT;//5 min intervals;
@@ -105,4 +104,6 @@ public abstract class HourlyTimetable extends Timetable {
 		}
 		timeslots.clear();
 	}
+	//should add timeslot to list, hourlygrid, and add listener to its view
+	public abstract void addTimeslot(Event e);
 }

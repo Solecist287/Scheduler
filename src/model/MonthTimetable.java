@@ -4,13 +4,12 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalField;
 import java.util.List;
 
-import javafx.collections.ObservableList;
-import javafx.scene.Node;
+import javafx.stage.Stage;
 
 public class MonthTimetable extends Timetable {
 
-	public MonthTimetable(List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
-		super(events, initDate, dayOfWeekTemporalField);
+	public MonthTimetable(Stage mainStage, List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
+		super(mainStage, events, initDate, dayOfWeekTemporalField);
 		// TODO Auto-generated constructor stub
 	}
 

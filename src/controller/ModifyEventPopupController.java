@@ -1,7 +1,6 @@
 package controller;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
@@ -15,10 +14,10 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import model.CalendarModel;
 import model.Event;
 
-public class AddEventPopupController {
+public class ModifyEventPopupController {
+	
 	@FXML
 	TextField titleTextField;
 	@FXML
@@ -30,18 +29,19 @@ public class AddEventPopupController {
 	@FXML
 	ColorPicker backgroundColorPicker;
 	@FXML
-	Button saveButton;
+	Button saveButton, deleteButton;
 	
-	private CalendarModel cmodel;
+	private Event selectedEvent;
 	private List<Event> events;
 	private Stage primaryStage;
 	private int comboBoxWidth = 77;//specific, but perfectly fits time choices
 	private final int TIME_INCREMENT = 5;
 	private final int MIN_EVENT_TIME = 35;
-	public void start(Stage primaryStage, CalendarModel cmodel, List<Event> events, LocalDate initDate) {
+	
+	public void start(Stage primaryStage, List<Event> events, Event e) {
 		this.primaryStage = primaryStage;
-		this.cmodel = cmodel;
 		this.events = events;
+		this.selectedEvent = e;
 		LocalTime t = LocalTime.MIDNIGHT;
 		//fill ComboBoxes with time choices for event
 		do {
@@ -52,16 +52,22 @@ public class AddEventPopupController {
 		//set ComboBox widths
 		startTimeComboBox.setStyle("-fx-pref-width: " + comboBoxWidth);
 		endTimeComboBox.setStyle("-fx-pref-width: " + comboBoxWidth);
-		//set default values
-		titleTextField.setText("Event Title");
-		datePicker.setValue(initDate);
+		//set title
+		titleTextField.setText(e.getTitle());
+		//set date
+		datePicker.setValue(e.getStartDateTime().toLocalDate());
 		datePicker.setShowWeekNumbers(false);
-		startTimeComboBox.getSelectionModel().select(0);
-		endTimeComboBox.getSelectionModel().select(0);
+		//set comboboxes to event starttime
+		startTimeComboBox.getSelectionModel().select(e.getStartDateTime().toLocalTime());
+		endTimeComboBox.getSelectionModel().select(e.getEndDateTime().toLocalTime());
+		//set description
+		descriptionTextArea.setText(e.getDescription());
+		//set color
+		backgroundColorPicker.setValue(e.getBackgroundColor());
 	}
-	
 	@FXML
 	public void saveEvent() {
+		System.out.println("save");
 		//fields for event object
 		String title = titleTextField.getText();
 		String description = descriptionTextArea.getText();
@@ -78,12 +84,13 @@ public class AddEventPopupController {
 			System.out.println("too short: difference is: " +  (endDateTime.getMinute() - startDateTime.getMinute()));
 			return;
 		}
-		//create event object
+		//remove old event
+		events.remove(selectedEvent);
+		//create new event
 		Event newEvent = new Event(title, description, startDateTime, endDateTime, color);
 		//check where to place event and do no insert if it collides with other event(s)
 		if (events.size() == 0) {//easy case: insert in empty list
 			events.add(newEvent);
-			cmodel.printEvents();
 			primaryStage.close();
 			return;
 		}
@@ -100,7 +107,13 @@ public class AddEventPopupController {
 			i++;
 			currentEvent = events.get(i);
 		}
-		cmodel.printEvents();//debugging
+		primaryStage.close();
+	}
+	
+	@FXML
+	public void deleteEvent() {
+		System.out.println("delete");
+		events.remove(selectedEvent);
 		primaryStage.close();
 	}
 }

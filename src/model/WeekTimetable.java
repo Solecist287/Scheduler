@@ -3,14 +3,13 @@ package model;
 import java.time.LocalDate;
 import java.time.temporal.TemporalField;
 import java.util.List;
-
-import javafx.collections.ObservableList;
 import javafx.scene.Node;
+import javafx.stage.Stage;
 
 public class WeekTimetable extends HourlyTimetable {
 
-	public WeekTimetable(List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
-		super(events, initDate, 7, dayOfWeekTemporalField);
+	public WeekTimetable(Stage mainStage, List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
+		super(mainStage, events, initDate, 7, dayOfWeekTemporalField);
 	}
 	
 	//cannot be static as long as temporalfield needs to be instantiated
@@ -39,16 +38,7 @@ public class WeekTimetable extends HourlyTimetable {
 					break;//stop searching
 				//add timeslot if falls in the current week
 				}else if (e.getStartDateTime().toLocalDate().isAfter(startOfWeek)) {
-					int weekIndex = e.getStartDateTime().get(dayOfWeekTemporalField);
-					//System.out.println("weekIndex: " + weekIndex);
-					Timeslot t = new Timeslot(e);
-					timeslots.add(t);
-					t.getView().setOnMouseClicked(event -> {
-						System.out.println("deleted: " + t.getEvent().getStartDateTime());
-						events.remove(e);
-					});
-					hourlyGrid.add(t.getView(), weekIndex, e.getRow(), 1, e.getRowSpan());
-					//hourlyGrid.getChildren().remove(p);
+					addTimeslot(e);
 				}
 			}
 		}
@@ -58,15 +48,7 @@ public class WeekTimetable extends HourlyTimetable {
 	@Override
 	public void addEvent(Event e) {
 		if (inTheSameWeek(e.getStartDateTime().toLocalDate(),lastDateEntered)) {
-			int weekIndex = e.getStartDateTime().get(dayOfWeekTemporalField);
-			Timeslot t = new Timeslot(e);
-			timeslots.add(t);
-			Node view = t.getView();
-			view.setOnMouseClicked(event -> {
-				System.out.println("deleted: " + t.getEvent().getStartDateTime());
-				events.remove(e);
-			});
-			hourlyGrid.add(view, weekIndex, e.getRow(), 1, e.getRowSpan());
+			addTimeslot(e);
 		}
 	}
 
@@ -87,6 +69,18 @@ public class WeekTimetable extends HourlyTimetable {
 	@Override
 	public String toString() {
 		return "Week";
+	}
+
+	@Override
+	public void addTimeslot(Event e) {
+		int weekIndex = e.getStartDateTime().get(dayOfWeekTemporalField);
+		Timeslot t = new Timeslot(e);
+		timeslots.add(t);
+		Node view = t.getView();
+		view.setOnMouseClicked(event -> {
+			modifyEventPopup(e);
+		});
+		hourlyGrid.add(view, weekIndex, e.getRow(), 1, e.getRowSpan());
 	}
 
 }

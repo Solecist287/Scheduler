@@ -86,7 +86,7 @@ public class MainDisplayController {
 		//timetableDisplay width
 		timetableDisplay.setMinWidth(Timetable.WIDTH + PADDING);//later use getters of current grid
 		//default locale
-		localeSetting = Locale.FRANCE;
+		localeSetting = Locale.US;
 		//set temporal field in order to know "beginning" of week like sunday,monday,etc.
 		dayOfWeekTemporalField = WeekFields.of(localeSetting).dayOfWeek();
 		//set locale so calendar is appropriate for region
@@ -108,10 +108,10 @@ public class MainDisplayController {
 		//add calendar display to left side of screen
 		calendarView.getChildren().add(0,datePickerSkinPopupContent);
 		//create timetables
-		dayTimetable = new DayTimetable(events, today, dayOfWeekTemporalField);
-		weekTimetable = new WeekTimetable(events, today, dayOfWeekTemporalField);
-		monthTimetable = new MonthTimetable(events, today, dayOfWeekTemporalField);
-		yearTimetable = new YearTimetable(events, today, dayOfWeekTemporalField);
+		dayTimetable = new DayTimetable(primaryStage, events, today, dayOfWeekTemporalField);
+		weekTimetable = new WeekTimetable(primaryStage, events, today, dayOfWeekTemporalField);
+		monthTimetable = new MonthTimetable(primaryStage, events, today, dayOfWeekTemporalField);
+		yearTimetable = new YearTimetable(primaryStage, events, today, dayOfWeekTemporalField);
 		//populate combobox with timetables
 		timeUnitComboBox.getItems().addAll(dayTimetable, weekTimetable, monthTimetable, yearTimetable);
 		//add listener to timeUnitComboBox
@@ -138,6 +138,7 @@ public class MainDisplayController {
 		//FXML stuff
 		FXMLLoader loader = new FXMLLoader();
 		loader.setLocation(getClass().getResource("/view/addEventPopup.fxml"));
+		try {
 		//content of fxml file
 		GridPane root = (GridPane)loader.load();
 		//retrieve and start up controller
@@ -147,10 +148,13 @@ public class MainDisplayController {
 		popupStage.initModality(Modality.APPLICATION_MODAL);
 		popupStage.initOwner(primaryStage);
 		popupStage.setScene(new Scene(root));
-		popupStage.setTitle("Add an event");
+		popupStage.setTitle("Add event");
 		popupStage.setResizable(false);
 		popupStage.centerOnScreen();
 		popupStage.show();
+		}catch(IOException ex) {
+			ex.printStackTrace();
+		}
 	}
 	@FXML
 	public void setToToday() {
