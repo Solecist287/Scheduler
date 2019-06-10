@@ -1,6 +1,5 @@
 package controller;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -22,7 +21,7 @@ public class AddEventPopupController {
 	@FXML
 	TextField titleTextField;
 	@FXML
-	DatePicker datePicker;
+	DatePicker startDatePicker, endDatePicker;
 	@FXML
 	ComboBox<LocalTime> startTimeComboBox, endTimeComboBox;
 	@FXML
@@ -37,7 +36,6 @@ public class AddEventPopupController {
 	private Stage primaryStage;
 	private int comboBoxWidth = 77;//specific, but perfectly fits time choices
 	private final int TIME_INCREMENT = 5;
-	private final int MIN_EVENT_TIME = 35;
 	public void start(Stage primaryStage, CalendarModel cmodel, List<Event> events, LocalDate initDate) {
 		this.primaryStage = primaryStage;
 		this.cmodel = cmodel;
@@ -54,8 +52,12 @@ public class AddEventPopupController {
 		endTimeComboBox.setStyle("-fx-pref-width: " + comboBoxWidth);
 		//set default values
 		titleTextField.setText("Event Title");
-		datePicker.setValue(initDate);
-		datePicker.setShowWeekNumbers(false);
+		//set datepicker values
+		startDatePicker.setValue(initDate);
+		startDatePicker.setShowWeekNumbers(false);
+		endDatePicker.setValue(initDate);
+		endDatePicker.setShowWeekNumbers(false);
+		//set combobox values
 		startTimeComboBox.getSelectionModel().select(0);
 		endTimeComboBox.getSelectionModel().select(0);
 	}
@@ -65,17 +67,14 @@ public class AddEventPopupController {
 		//fields for event object
 		String title = titleTextField.getText();
 		String description = descriptionTextArea.getText();
-		LocalDateTime startDateTime = LocalDateTime.of(datePicker.getValue(), startTimeComboBox.getValue());
-		LocalDateTime endDateTime = LocalDateTime.of(datePicker.getValue(), endTimeComboBox.getValue());
+		LocalDateTime startDateTime = LocalDateTime.of(startDatePicker.getValue(), startTimeComboBox.getValue());
+		LocalDateTime endDateTime = LocalDateTime.of(endDatePicker.getValue(), endTimeComboBox.getValue());
 		Color color = backgroundColorPicker.getValue();
 		//check if title is empty
 		if (title.isEmpty() || title == null) {return;}
 		//make sure startdatetime is before enddatetime (cannot be equal either), does not allow events span days
-		if (startDateTime.isAfter(endDateTime) || startDateTime.equals(endDateTime) ||
-				!startDateTime.toLocalDate().equals(endDateTime.toLocalDate())) {return;}
-		//make sure event is not <30 min
-		if (Duration.between(startDateTime, endDateTime).toMinutes() < MIN_EVENT_TIME) {
-			System.out.println("too short: difference is: " +  (endDateTime.getMinute() - startDateTime.getMinute()));
+		if (!startDateTime.isBefore(endDateTime)) {
+			System.out.println("start, " + startDateTime + ", is not before end, " + endDateTime);
 			return;
 		}
 		//create event object
@@ -90,17 +89,19 @@ public class AddEventPopupController {
 		int i = 0;
 		Event currentEvent = events.get(i);
 		while(!newEvent.isDuring(currentEvent) && i<events.size()) {
-			if (newEvent.isBefore(currentEvent)) {
+			if (newEvent.endsBy(currentEvent)) {
 				events.add(i,newEvent);
+				cmodel.printEvents();//debugging
+				primaryStage.close();
 				break;
-			}else if (i == events.size()-1 && newEvent.isAfter(currentEvent)) {//after last event
+			}else if (i == events.size()-1 && newEvent.startsBy(currentEvent)) {//after last event
 				events.add(newEvent);		
+				cmodel.printEvents();//debugging
+				primaryStage.close();
 				break;
 			}
 			i++;
 			currentEvent = events.get(i);
 		}
-		cmodel.printEvents();//debugging
-		primaryStage.close();
 	}
 }

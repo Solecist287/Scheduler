@@ -25,17 +25,19 @@ public class Event implements Serializable{
 		green = backgroundColor.getGreen();
 		blue = backgroundColor.getBlue();
 	}
-	
-	public boolean isBefore(Event other) {
-		return this.getEndDateTime().isBefore(other.getStartDateTime());
+	//event ends at or before another event
+	public boolean endsBy(Event other) {
+		return this.getEndDateTime().isBefore(other.getStartDateTime()) 
+				|| this.getEndDateTime().equals(other.getStartDateTime());
 	}
-	
-	public boolean isAfter(Event other) {
-		return this.getStartDateTime().isAfter(other.getEndDateTime());
+	//event starts at or after another event's ending
+	public boolean startsBy(Event other) {
+		return this.getStartDateTime().isAfter(other.getEndDateTime())
+				|| this.getStartDateTime().equals(other.getEndDateTime());
 	}
 	
 	public boolean isDuring(Event other) {
-		return !this.isBefore(other) && !this.isAfter(other);
+		return !this.endsBy(other) && !this.startsBy(other);
 	}
 	
 	public String getTitle() {
@@ -64,14 +66,6 @@ public class Event implements Serializable{
 
 	public LocalDateTime getEndDateTime() {
 		return endDateTime;
-	}
-
-	public int getRowSpan() {
-		return (int)(Duration.between(startDateTime.toLocalTime(), endDateTime.toLocalTime()).toMinutes())/5;
-	}
-	public int getRow() {
-		LocalTime startTime = startDateTime.toLocalTime();
-		return (startTime.getHour() * 60 + startTime.getMinute())/5;
 	}
 	
 	public void setEndDateTime(LocalDateTime endDateTime) {

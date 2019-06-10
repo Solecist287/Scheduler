@@ -104,5 +104,6 @@ public abstract class HourlyTimetable extends Timetable {
 		timeslots.clear();
 	}
 	//should add timeslot to list, hourlygrid, and add listener to its view
-	public abstract void addTimeslot(Event e);
+	public abstract void addTimeslots(Event e, LocalDate date);
+	public abstract boolean isRenderable(Event e, LocalDate d);
 }
