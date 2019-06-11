@@ -6,6 +6,7 @@ import java.time.temporal.TemporalField;
 import java.util.List;
 
 import controller.ModifyEventPopupController;
+import controller.ViewEventPopupController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
@@ -38,23 +39,23 @@ public abstract class Timetable {
 	//removes timeslot if event is in same timeunit
 	public abstract void removeEvent(Event e);
 	//called when event is clicked on
-	public void modifyEventPopup(Event e){
+	public void viewEventPopup(Event e) {
 		//create popup stage
 		Stage popupStage = new Stage();
 		//FXML stuff
 		FXMLLoader loader = new FXMLLoader();
-		loader.setLocation(getClass().getResource("/view/modifyEventPopup.fxml"));
+		loader.setLocation(getClass().getResource("/view/viewEventPopup.fxml"));
 		try {
 			//content of fxml file
 			GridPane root = (GridPane)loader.load();
 			//retrieve and start up controller
-			ModifyEventPopupController modifyEventPopupController = loader.getController();
-			modifyEventPopupController.start(popupStage, events, e);
+			ViewEventPopupController viewEventPopupController = loader.getController();
+			viewEventPopupController.start(popupStage, events, e);
 			//set up stage
 			popupStage.initModality(Modality.APPLICATION_MODAL);
 			popupStage.initOwner(mainStage);
 			popupStage.setScene(new Scene(root));
-			popupStage.setTitle("Modify event");
+			popupStage.setTitle("View event");
 			popupStage.setResizable(false);
 			popupStage.centerOnScreen();
 			popupStage.show();

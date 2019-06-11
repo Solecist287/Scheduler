@@ -89,7 +89,7 @@ public class WeekTimetable extends HourlyTimetable {
 			timeslots.add(t);
 			Node view = t.getView();
 			view.setOnMouseClicked(event -> {
-				modifyEventPopup(e);
+				viewEventPopup(e);
 			});
 			System.out.println("slice: start is " + timeslotStart + ", end is " + timeslotEnd);
 			hourlyGrid.add(view, weekIndex, t.getRow(), 1, t.getRowSpan());

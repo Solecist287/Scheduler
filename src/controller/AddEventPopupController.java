@@ -6,12 +6,14 @@ import java.time.LocalTime;
 import java.util.List;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import model.CalendarModel;
@@ -51,7 +53,7 @@ public class AddEventPopupController {
 		startTimeComboBox.setStyle("-fx-pref-width: " + comboBoxWidth);
 		endTimeComboBox.setStyle("-fx-pref-width: " + comboBoxWidth);
 		//set default values
-		titleTextField.setText("Event Title");
+		titleTextField.setText("");
 		//set datepicker values
 		startDatePicker.setValue(initDate);
 		startDatePicker.setShowWeekNumbers(false);
@@ -71,10 +73,13 @@ public class AddEventPopupController {
 		LocalDateTime endDateTime = LocalDateTime.of(endDatePicker.getValue(), endTimeComboBox.getValue());
 		Color color = backgroundColorPicker.getValue();
 		//check if title is empty
-		if (title.isEmpty() || title == null) {return;}
-		//make sure startdatetime is before enddatetime (cannot be equal either), does not allow events span days
+		if (title.isEmpty() || title == null) {
+			title = "(No title)";
+		}
+		//make sure startdatetime is before enddatetime (cannot be equal either)
 		if (!startDateTime.isBefore(endDateTime)) {
-			System.out.println("start, " + startDateTime + ", is not before end, " + endDateTime);
+			//System.out.println("start, " + startDateTime + ", is not before end, " + endDateTime);
+			showErrorPopup("Start must be before end of event.");
 			return;
 		}
 		//create event object
@@ -93,15 +98,27 @@ public class AddEventPopupController {
 				events.add(i,newEvent);
 				cmodel.printEvents();//debugging
 				primaryStage.close();
-				break;
+				return;
 			}else if (i == events.size()-1 && newEvent.startsBy(currentEvent)) {//after last event
 				events.add(newEvent);		
 				cmodel.printEvents();//debugging
 				primaryStage.close();
-				break;
+				return;
 			}
 			i++;
 			currentEvent = events.get(i);
 		}
+		//if reached here, then newevent intersects with some event without any resolution
+		showErrorPopup("This event would conflict with another event.");
+	}
+	private void showErrorPopup(String message) {                
+      Alert alert = new Alert(AlertType.INFORMATION);
+      alert.initOwner(primaryStage);
+      alert.setTitle("Error");
+      //didnt like header text
+      alert.setHeaderText(null);
+      alert.setGraphic(null);
+      alert.setContentText(message);
+      alert.showAndWait();
 	}
 }

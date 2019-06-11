@@ -72,7 +72,7 @@ public class DayTimetable extends HourlyTimetable {
 		timeslots.add(t);
 		Node view = t.getView();
 		view.setOnMouseClicked(event -> {
-			modifyEventPopup(e);
+			viewEventPopup(e);
 		});
 		hourlyGrid.add(view, 1, t.getRow(), 1, t.getRowSpan());
 	}

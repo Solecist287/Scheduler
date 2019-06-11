@@ -5,12 +5,14 @@ import java.time.LocalTime;
 import java.util.List;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import model.Event;
@@ -75,9 +77,14 @@ public class ModifyEventPopupController {
 		LocalDateTime endDateTime = LocalDateTime.of(endDatePicker.getValue(), endTimeComboBox.getValue());
 		Color color = backgroundColorPicker.getValue();
 		//check if title is empty
-		if (title.isEmpty() || title == null) {return;}
-		//make sure startdatetime is before enddatetime (cannot be equal either), does not allow events span days
-		if (!startDateTime.isBefore(endDateTime)) {return;}
+		if (title.isEmpty() || title == null) {
+			title = "(No title)";
+		}
+		//make sure startdatetime is before enddatetime (cannot be equal either)
+		if (!startDateTime.isBefore(endDateTime)) {
+			showErrorPopup("Start must be before end of event.");
+			return;
+		}
 		//remove old event
 		events.remove(selectedEvent);
 		//create new event
@@ -94,15 +101,17 @@ public class ModifyEventPopupController {
 			if (newEvent.endsBy(currentEvent)) {
 				events.add(i,newEvent);
 				primaryStage.close();
-				break;
+				return;
 			}else if (i == events.size()-1 && newEvent.startsBy(currentEvent)) {//after last event
 				events.add(newEvent);
 				primaryStage.close();
-				break;
+				return;
 			}
 			i++;
 			currentEvent = events.get(i);
 		}
+		//if reached here, then newevent intersects with some event without any resolution
+		showErrorPopup("This event would conflict with another event.");
 	}
 	
 	@FXML
@@ -110,5 +119,16 @@ public class ModifyEventPopupController {
 		System.out.println("delete");
 		events.remove(selectedEvent);
 		primaryStage.close();
+	}
+	
+	private void showErrorPopup(String message) {                
+      Alert alert = new Alert(AlertType.INFORMATION);
+      alert.initOwner(primaryStage);
+      alert.setTitle("Error");
+      //didnt like header text
+      alert.setHeaderText(null);
+      alert.setGraphic(null);
+      alert.setContentText(message);
+      alert.showAndWait();
 	}
 }
