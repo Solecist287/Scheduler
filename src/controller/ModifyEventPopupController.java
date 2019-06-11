@@ -102,7 +102,7 @@ public class ModifyEventPopupController {
 				events.add(i,newEvent);
 				primaryStage.close();
 				return;
-			}else if (i == events.size()-1 && newEvent.startsBy(currentEvent)) {//after last event
+			}else if (i == events.size()-1 && newEvent.startsBy(currentEvent)) { //after last event
 				events.add(newEvent);
 				primaryStage.close();
 				return;
