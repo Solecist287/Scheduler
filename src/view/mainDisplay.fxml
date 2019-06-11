@@ -40,7 +40,7 @@
 				<center>
 					<Label fx:id="monthYearLabel" text="">
 						<font>
-							<Font name="Bold" size="20"/>
+							<Font name="Bold" size="25"/>
 						</font>
 					</Label>
 				</center>

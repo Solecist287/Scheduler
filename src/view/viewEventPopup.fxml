@@ -29,9 +29,9 @@
 		<Insets top="10" right="10" bottom="10" left="10"/>
 	</padding>	
 	<children>
-		<ScrollPane GridPane.rowIndex="0" fx:id="infoScrollPane" >
+		<ScrollPane GridPane.rowIndex="0" fx:id="infoScrollPane" fitToWidth="true">
 			<content>
-			<Label fx:id="infoLabel" text=""/>
+				<TextFlow fx:id="eventInfo"/>
 			</content>
 		</ScrollPane>
 		<HBox GridPane.rowIndex="1" spacing="10">
