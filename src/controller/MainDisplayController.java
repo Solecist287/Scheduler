@@ -19,6 +19,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.skin.DatePickerSkin;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
@@ -33,7 +34,7 @@ import model.YearTimetable;
 
 public class MainDisplayController {
 	@FXML
-	ScrollPane timetableDisplay;
+	BorderPane timetableDisplay;
 	@FXML
 	VBox calendarView;
 	@FXML
@@ -56,7 +57,6 @@ public class MainDisplayController {
 	
 	private TemporalField dayOfWeekTemporalField;//later be a general setting
 	private Locale localeSetting;
-	private final int PADDING = 20;//for timetable display
 	
 	public void start(Stage primaryStage, CalendarModel cmodel) {
 		this.primaryStage = primaryStage;
@@ -83,7 +83,7 @@ public class MainDisplayController {
             }
         });
 		//timetableDisplay width
-		timetableDisplay.setMinWidth(Timetable.WIDTH + PADDING);//later use getters of current grid
+		//timetableDisplay.setMinWidth(Timetable.WIDTH + PADDING);//later use getters of current grid
 		//default locale
 		localeSetting = Locale.US;
 		//set temporal field in order to know "beginning" of week like sunday,monday,etc.
@@ -123,7 +123,7 @@ public class MainDisplayController {
 			//change timetable display
 			selectedTimetable = newval;//set selected timetable
 			selectedTimetable.update(getSelectedDate());//update timetable itself
-			timetableDisplay.setContent(selectedTimetable.getView());//show updated timetable
+			timetableDisplay.setCenter(selectedTimetable.getView());//show updated timetable
 		});
 		//initialize timeunitcombobox to time unit "Day" (triggers its listener to init stuff)
 		timeUnitComboBox.getSelectionModel().select(0);

@@ -6,12 +6,28 @@ import java.time.LocalTime;
 import java.time.temporal.TemporalField;
 import java.util.List;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 public class WeekTimetable extends HourlyTimetable {
 
 	public WeekTimetable(Stage mainStage, List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
 		super(mainStage, events, initDate, 7, dayOfWeekTemporalField);
+		updateHeaderLabels(initDate);
+		//initialize events on timetable
+		
+		LocalDate startOfWeek = initDate.with(dayOfWeekTemporalField,1);
+		LocalDate endOfWeek = initDate.with(dayOfWeekTemporalField,7);
+		for (int i = 0; i < events.size(); i++) {
+			Event e = events.get(i);
+			//stop searching once past the end of the week
+			if (e.getStartDateTime().toLocalDate().isAfter(endOfWeek)) {
+				break;//stop searching
+			//add timeslot if falls in the current week or intersects week
+			}else if (isRenderable(e,initDate)) {
+				addTimeslots(e, initDate);
+			}
+		}
 	}
 	
 	//cannot be static as long as temporalfield needs to be instantiated
@@ -26,6 +42,8 @@ public class WeekTimetable extends HourlyTimetable {
 	public void update(LocalDate date) {
 		//only do render new week if date is in another week than lastDateEntered
 		if (!inTheSameWeek(lastDateEntered, date)) {
+			//update day labels
+			updateHeaderLabels(date);
 			//clear timeslots from list and hourlygrid
 			clearTimeslots();
 			LocalDate startOfWeek = date.with(dayOfWeekTemporalField,1);
@@ -105,6 +123,19 @@ public class WeekTimetable extends HourlyTimetable {
 		LocalDate afterEndOfWeek = d.with(dayOfWeekTemporalField,7).plusDays(1);
 		return start.toLocalDate().isBefore(afterEndOfWeek) && end.toLocalDate().isAfter(beforeStartOfWeek) 
 				&& !end.equals(LocalDateTime.of(beforeStartOfWeek.plusDays(1), LocalTime.MIDNIGHT));
+	}
+	
+	private void updateHeaderLabels(LocalDate date) {
+		for (int i = 0; i < headerLabels.size(); i++) {
+			LocalDate currentDate = date.with(dayOfWeekTemporalField,i+1);//day indices start at 1
+			Label currentLabel = headerLabels.get(i);
+			//get info for label text
+			String dayOfWeekCaps = currentDate.getDayOfWeek().toString();
+			String dayOfWeek = dayOfWeekCaps.substring(0,1) + dayOfWeekCaps.toLowerCase().substring(1,3);
+			int dayOfMonth = currentDate.getDayOfMonth();
+			//set label text
+			currentLabel.setText(dayOfWeek + "\n" + dayOfMonth);
+		}
 	}
 
 }

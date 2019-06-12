@@ -20,6 +20,8 @@ public abstract class Timetable {
 	Node view;
 	TemporalField dayOfWeekTemporalField;
 	public static final int WIDTH = 742;
+	public static final int HEIGHT = 500;
+	public static final int PADDING = 20;//for timetable display
 	LocalDate lastDateEntered;//highlighted date, if applicable
 	public Timetable(Stage mainStage, List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
 		this.mainStage = mainStage;

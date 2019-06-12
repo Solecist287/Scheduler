@@ -6,20 +6,38 @@ import java.time.LocalTime;
 import java.time.temporal.TemporalField;
 import java.util.List;
 import javafx.scene.Node;
+import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 public class DayTimetable extends HourlyTimetable {
-
+	Label headerLabel;
+	
 	public DayTimetable(Stage mainStage, List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
 		super(mainStage, events, initDate, 1, dayOfWeekTemporalField);
+		headerLabel = headerLabels.get(0);
+		updateHeaderLabel(initDate);
+		//initialize events on timetable
+		for (int i = 0; i < events.size(); i++) {
+			Event e = events.get(i);
+			//search linearly until after last day entered
+			if (e.getStartDateTime().toLocalDate().isAfter(initDate)) {
+				break;//stop searching
+			//add events if it doesn't end before input date
+			}else if (isRenderable(e,initDate)) {
+				addTimeslots(e, initDate);
+			}
+		}
 	}
 
 	@Override
 	public void update(LocalDate date) {
 		if (!date.equals(lastDateEntered)) {
+			//update day label
+			updateHeaderLabel(date);
 			//clear timeslots from list and hourlygrid
 			clearTimeslots();
 			//draw events that match date
+			System.out.println("size: " + this.events.size());
 			for (int i = 0; i < events.size(); i++) {
 				Event e = events.get(i);
 				//search linearly until after last day entered
@@ -85,5 +103,12 @@ public class DayTimetable extends HourlyTimetable {
 		LocalDate yesterday = d.minusDays(1);
 		return start.toLocalDate().isBefore(tomorrow) && end.toLocalDate().isAfter(yesterday) 
 				&& !end.equals(LocalDateTime.of(d, LocalTime.MIDNIGHT));
+	}
+	
+	private void updateHeaderLabel(LocalDate date) {
+		String dayOfWeekCaps = date.getDayOfWeek().toString();
+		String dayOfWeek = dayOfWeekCaps.substring(0,1) + dayOfWeekCaps.toLowerCase().substring(1,3);
+		int dayOfMonth = date.getDayOfMonth();
+		headerLabel.setText(dayOfWeek + "\n" + dayOfMonth);
 	}
 }

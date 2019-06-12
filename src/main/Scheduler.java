@@ -36,7 +36,7 @@ public class Scheduler extends Application{
 	@Override
 	public void stop() {
 		//write stuff back to database
-		//CalendarModel.writeData(cmodel);
+		CalendarModel.writeData(cmodel);
 	}
 	
 	public static void main(String[] args) {

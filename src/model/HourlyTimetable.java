@@ -4,18 +4,27 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.List;
+
+import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public abstract class HourlyTimetable extends Timetable {
-	final int TIME_INCREMENT = 5;
-	final int TIME_LABEL_WIDTH = 42;
+	static final int TIME_INCREMENT = 5;
+	static final int TIME_LABEL_WIDTH = 42;
+	static final int SCROLL_HEIGHT = 500;
+	static final int HEADER_HEIGHT = 40;//??
 	int rowNum, rowSize, colNum, colSize, dayNum;
-	GridPane hourlyGrid;
+	ScrollPane hourlyGridContainer;
+	GridPane hourlyGrid, headerGrid;
+	
+	List<Label> headerLabels;
 	List<Timeslot> timeslots;
 	public HourlyTimetable(Stage mainStage, List<Event> events, LocalDate initDate, int dayNum, TemporalField dayOfWeekTemporalField) {
 		super(mainStage, events, initDate, dayOfWeekTemporalField);
@@ -25,8 +34,16 @@ public abstract class HourlyTimetable extends Timetable {
 		rowSize = TIME_INCREMENT; 
 		colNum = dayNum + 1;//first is time label column
 		colSize = (WIDTH-TIME_LABEL_WIDTH)/dayNum;
-		//create grid
+		//create grids
+		headerGrid = new GridPane();
 		hourlyGrid = new GridPane();
+		//create lists
+		headerLabels = new ArrayList<Label>();
+		timeslots = new ArrayList<Timeslot>();
+		//create view
+		createView();
+	}
+	private void createHourlyGrid() {
 		//add constraints for hourly grid
 		//set column and row constraints
 		for (int i = 0; i < colNum; i++) {
@@ -36,14 +53,6 @@ public abstract class HourlyTimetable extends Timetable {
 		for (int i = 0; i < rowNum; i++) {
 			hourlyGrid.getRowConstraints().add(new RowConstraints(rowSize));
 		}
-		//then add listener for changing grid
-		//create view
-		createView();
-		timeslots = new ArrayList<Timeslot>();
-	}
-
-	@Override
-	public void createView() {
 		//draw tiles
 		for (int i = 0; i < colNum; i++) {
 			for (int j = 0; j < rowNum; j++) {
@@ -93,7 +102,62 @@ public abstract class HourlyTimetable extends Timetable {
 				}
 			}
 		}
-		view = hourlyGrid;//change later when more complicated
+	}
+	private void createHeaderGrid() {
+		//set column restraints
+		for (int i = 0; i < colNum; i++) {
+			int ccSize = (i == 0) ? TIME_LABEL_WIDTH : colSize;
+			headerGrid.getColumnConstraints().add(new ColumnConstraints(ccSize));
+		}
+		headerGrid.getRowConstraints().add(new RowConstraints(HEADER_HEIGHT));
+		for (int i = 0; i < colNum; i++) {
+			if (i == 0) {
+				Pane p = new Pane();
+				p.setStyle("-fx-background-color: white");
+				headerGrid.add(p,i,0);
+			}else {
+				Label l = new Label();
+				l.setAlignment(Pos.CENTER);
+				l.setPrefWidth(colSize);
+				l.setPrefHeight(HEADER_HEIGHT);
+				l.setStyle(/*"-fx-border-width: 1;" + "-fx-border-color: black;" + */"-fx-background-color: white;");
+				//add to list
+				headerLabels.add(l);
+				//add to grid
+				headerGrid.add(l,i,0);
+			}
+		}
+		//set dividing lines between headerLabels
+		if (headerLabels.size()>1) {
+			for (int i = 1; i < headerLabels.size()-1; i++) {
+				Label currentLabel = headerLabels.get(i);
+				String style = "-fx-border-color: black;";
+				if (i == headerLabels.size()-2) {
+					style += "-fx-border-width: 0 1 0 1;";
+				}else {
+					style += "-fx-border-width: 0 0 0 1;";
+				}
+				currentLabel.setStyle(style);
+			}
+		}
+		headerGrid.setStyle("-fx-border-width: 1 1 0 1;" + "-fx-border-color: black;" + "-fx-background-color: white;");
+		//headerGrid.setGridLinesVisible(true);
+	}
+	@Override
+	public void createView() {
+		//set constraints and populate grids
+		createHeaderGrid();
+		createHourlyGrid();
+		//create scrollpane to contain hourlygrid
+		hourlyGridContainer = new ScrollPane();
+		hourlyGridContainer.setPrefHeight(SCROLL_HEIGHT - HEADER_HEIGHT);
+		hourlyGridContainer.setMinWidth(WIDTH + PADDING);
+		hourlyGridContainer.setContent(hourlyGrid);
+		//contains the whole view
+		VBox container = new VBox();
+		container.getChildren().addAll(headerGrid, hourlyGridContainer);
+		//set view
+		view = container;
 	}
 	//removes timeslots from list and from hourlygrid
 	public void clearTimeslots() {

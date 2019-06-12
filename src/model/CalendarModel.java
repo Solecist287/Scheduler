@@ -16,7 +16,7 @@ import javafx.collections.ObservableList;
 public class CalendarModel implements Serializable {
 
 	public static final String storeDir = "./data";
-	public static final String storeFile = "users.dat";
+	public static final String storeFile = "events.dat";
 	
 	private static final long serialVersionUID = 631182814265361496L;
 	private List<Event> events;
@@ -47,6 +47,7 @@ public class CalendarModel implements Serializable {
 			ois.close();
 			return cmodel;
 		}catch(Exception e) {
+			System.out.println("oh no");
 			return new CalendarModel();
 		}
 	}
