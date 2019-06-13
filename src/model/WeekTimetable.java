@@ -14,20 +14,7 @@ public class WeekTimetable extends HourlyTimetable {
 	public WeekTimetable(Stage mainStage, List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
 		super(mainStage, events, initDate, 7, dayOfWeekTemporalField);
 		updateHeaderLabels(initDate);
-		//initialize events on timetable
-		
-		LocalDate startOfWeek = initDate.with(dayOfWeekTemporalField,1);
-		LocalDate endOfWeek = initDate.with(dayOfWeekTemporalField,7);
-		for (int i = 0; i < events.size(); i++) {
-			Event e = events.get(i);
-			//stop searching once past the end of the week
-			if (e.getStartDateTime().toLocalDate().isAfter(endOfWeek)) {
-				break;//stop searching
-			//add timeslot if falls in the current week or intersects week
-			}else if (isRenderable(e,initDate)) {
-				addTimeslots(e, initDate);
-			}
-		}
+		renderEvents(initDate);
 	}
 	
 	//cannot be static as long as temporalfield needs to be instantiated
@@ -46,18 +33,8 @@ public class WeekTimetable extends HourlyTimetable {
 			updateHeaderLabels(date);
 			//clear timeslots from list and hourlygrid
 			clearTimeslots();
-			LocalDate startOfWeek = date.with(dayOfWeekTemporalField,1);
-			LocalDate endOfWeek = date.with(dayOfWeekTemporalField,7);
-			for (int i = 0; i < events.size(); i++) {
-				Event e = events.get(i);
-				//stop searching once past the end of the week
-				if (e.getStartDateTime().toLocalDate().isAfter(endOfWeek)) {
-					break;//stop searching
-				//add timeslot if falls in the current week or intersects week
-				}else if (isRenderable(e,date)) {
-					addTimeslots(e, date);
-				}
-			}
+			//render events
+			renderEvents(date);
 		}
 		lastDateEntered = date;
 	}
@@ -135,6 +112,22 @@ public class WeekTimetable extends HourlyTimetable {
 			int dayOfMonth = currentDate.getDayOfMonth();
 			//set label text
 			currentLabel.setText(dayOfWeek + "\n" + dayOfMonth);
+		}
+	}
+
+	@Override
+	public void renderEvents(LocalDate date) {
+		LocalDate startOfWeek = date.with(dayOfWeekTemporalField,1);
+		LocalDate endOfWeek = date.with(dayOfWeekTemporalField,7);
+		for (int i = 0; i < events.size(); i++) {
+			Event e = events.get(i);
+			//stop searching once past the end of the week
+			if (e.getStartDateTime().toLocalDate().isAfter(endOfWeek)) {
+				break;//stop searching
+			//add timeslot if falls in the current week or intersects week
+			}else if (isRenderable(e,date)) {
+				addTimeslots(e, date);
+			}
 		}
 	}
 

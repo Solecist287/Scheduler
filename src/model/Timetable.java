@@ -35,6 +35,7 @@ public abstract class Timetable {
 	}
 	public abstract void createView();
 	//reconstructs timeslots if lastdateentered and currentdate not in same time unit
+	public abstract void renderEvents(LocalDate date);
 	public abstract void update(LocalDate date);
 	//adds new timeslot if event is in same timeunit
 	public abstract void addEvent(Event e);

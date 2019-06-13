@@ -16,17 +16,7 @@ public class DayTimetable extends HourlyTimetable {
 		super(mainStage, events, initDate, 1, dayOfWeekTemporalField);
 		headerLabel = headerLabels.get(0);
 		updateHeaderLabel(initDate);
-		//initialize events on timetable
-		for (int i = 0; i < events.size(); i++) {
-			Event e = events.get(i);
-			//search linearly until after last day entered
-			if (e.getStartDateTime().toLocalDate().isAfter(initDate)) {
-				break;//stop searching
-			//add events if it doesn't end before input date
-			}else if (isRenderable(e,initDate)) {
-				addTimeslots(e, initDate);
-			}
-		}
+		renderEvents(initDate);
 	}
 
 	@Override
@@ -37,17 +27,7 @@ public class DayTimetable extends HourlyTimetable {
 			//clear timeslots from list and hourlygrid
 			clearTimeslots();
 			//draw events that match date
-			System.out.println("size: " + this.events.size());
-			for (int i = 0; i < events.size(); i++) {
-				Event e = events.get(i);
-				//search linearly until after last day entered
-				if (e.getStartDateTime().toLocalDate().isAfter(date)) {
-					break;//stop searching
-				//add events if it doesn't end before input date
-				}else if (isRenderable(e,date)) {
-					addTimeslots(e, date);
-				}
-			}
+			renderEvents(date);
 		}
 		lastDateEntered = date;
 	}
@@ -110,5 +90,19 @@ public class DayTimetable extends HourlyTimetable {
 		String dayOfWeek = dayOfWeekCaps.substring(0,1) + dayOfWeekCaps.toLowerCase().substring(1,3);
 		int dayOfMonth = date.getDayOfMonth();
 		headerLabel.setText(dayOfWeek + "\n" + dayOfMonth);
+	}
+
+	@Override
+	public void renderEvents(LocalDate date) {
+		for (int i = 0; i < events.size(); i++) {
+			Event e = events.get(i);
+			//search linearly until after last day entered
+			if (e.getStartDateTime().toLocalDate().isAfter(date)) {
+				break;//stop searching
+			//add events if it doesn't end before input date
+			}else if (isRenderable(e,date)) {
+				addTimeslots(e, date);
+			}
+		}
 	}
 }

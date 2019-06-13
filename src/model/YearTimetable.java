@@ -41,4 +41,10 @@ public class YearTimetable extends Timetable {
 		
 	}
 
+	@Override
+	public void renderEvents(LocalDate date) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.text.*?>
+
+<?import javafx.geometry.Insets?>
+
+<?import java.lang.*?>
+<?import java.net.*?>
+<?import java.util.*?>
+<?import javafx.collections.*?>
+<?import javafx.scene.paint.*?>
+
+<GridPane
+	xmlns:fx="http://javafx.com/fxml/1"
+	fx:controller="controller.ModifyEventPopupController"
+	vgap="10">
+	
+	<padding>
+		<Insets top="10" right="10" bottom="10" left="10"/>
+	</padding>	
+	
+	<children>
+		<TextField GridPane.rowIndex="0" fx:id="titleTextField" promptText="Add Title"/>
+		<HBox GridPane.rowIndex="1" spacing="10">
+			<children>
+				<DatePicker fx:id="startDatePicker"/>
+				<ComboBox fx:id="startTimeComboBox"/>
+				<Text text="-">
+					<font>
+						<Font name="Times New Roman" size="24"/>
+					</font>
+				</Text>
+				<DatePicker fx:id="endDatePicker"/>
+				<ComboBox fx:id="endTimeComboBox"/>
+			</children>
+		</HBox>
+		<TextArea GridPane.rowIndex="2" fx:id="descriptionTextArea" promptText="Add Optional Description"/>
+		<ColorPicker GridPane.rowIndex="3" fx:id="backgroundColorPicker"/>
+		<HBox GridPane.rowIndex="4" alignment="BASELINE_RIGHT">
+			<Button fx:id="deleteButton" text="Delete" onAction="#deleteEvent"/>
+			<Button fx:id="saveButton" text="Save" onAction="#saveEvent"/>
+		</HBox>
+	</children>
+</GridPane>

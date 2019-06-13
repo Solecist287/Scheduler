@@ -41,4 +41,10 @@ public class MonthTimetable extends Timetable {
 		
 	}
 
+	@Override
+	public void renderEvents(LocalDate date) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
