@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalField;
 import java.util.List;
 
-import controller.ModifyEventPopupController;
 import controller.ViewEventPopupController;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -22,7 +21,9 @@ public abstract class Timetable {
 	public static final int WIDTH = 742;
 	public static final int HEIGHT = 500;
 	public static final int PADDING = 20;//for timetable display
+	int rowNum, rowSize, colNum, colSize;
 	LocalDate lastDateEntered;//highlighted date, if applicable
+	
 	public Timetable(Stage mainStage, List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
 		this.mainStage = mainStage;
 		this.events = events;
@@ -34,13 +35,16 @@ public abstract class Timetable {
 		return view;
 	}
 	public abstract void createView();
-	//reconstructs timeslots if lastdateentered and currentdate not in same time unit
+	//called to render all applicable events
 	public abstract void renderEvents(LocalDate date);
+	//called to see if event can be rendered to current state of view
+	public abstract boolean isRenderable(Event e, LocalDate d);
+	//reconstructs timeslots if lastdateentered and currentdate not in same time unit
 	public abstract void update(LocalDate date);
 	//adds new timeslot if event is in same timeunit
-	public abstract void addEvent(Event e);
+	public abstract void onEventAdded(Event e);
 	//removes timeslot if event is in same timeunit
-	public abstract void removeEvent(Event e);
+	public abstract void onEventRemoved(Event e);
 	//called when event is clicked on
 	public void viewEventPopup(Event e) {
 		//create popup stage

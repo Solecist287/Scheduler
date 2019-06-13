@@ -18,9 +18,8 @@ import javafx.stage.Stage;
 public abstract class HourlyTimetable extends Timetable {
 	static final int TIME_INCREMENT = 5;
 	static final int TIME_LABEL_WIDTH = 42;
-	static final int SCROLL_HEIGHT = 500;
 	static final int HEADER_HEIGHT = 40;//??
-	int rowNum, rowSize, colNum, colSize, dayNum;
+	int dayNum;
 	ScrollPane hourlyGridContainer;
 	GridPane hourlyGrid, headerGrid;
 	
@@ -29,14 +28,11 @@ public abstract class HourlyTimetable extends Timetable {
 	public HourlyTimetable(Stage mainStage, List<Event> events, LocalDate initDate, int dayNum, TemporalField dayOfWeekTemporalField) {
 		super(mainStage, events, initDate, dayOfWeekTemporalField);
 		this.dayNum = dayNum;
-		//set grid dimensions
+		//set timetable dimensions
 		rowNum = (24*60)/TIME_INCREMENT;//5 min intervals;
 		rowSize = TIME_INCREMENT; 
 		colNum = dayNum + 1;//first is time label column
 		colSize = (WIDTH-TIME_LABEL_WIDTH)/dayNum;
-		//create grids
-		headerGrid = new GridPane();
-		hourlyGrid = new GridPane();
 		//create lists
 		headerLabels = new ArrayList<Label>();
 		timeslots = new ArrayList<Timeslot>();
@@ -44,7 +40,7 @@ public abstract class HourlyTimetable extends Timetable {
 		createView();
 	}
 	private void createHourlyGrid() {
-		//add constraints for hourly grid
+		hourlyGrid = new GridPane();
 		//set column and row constraints
 		for (int i = 0; i < colNum; i++) {
 			int ccSize = (i == 0) ? TIME_LABEL_WIDTH : colSize;
@@ -104,6 +100,7 @@ public abstract class HourlyTimetable extends Timetable {
 		}
 	}
 	private void createHeaderGrid() {
+		headerGrid = new GridPane();
 		//set column restraints
 		for (int i = 0; i < colNum; i++) {
 			int ccSize = (i == 0) ? TIME_LABEL_WIDTH : colSize;
@@ -150,7 +147,7 @@ public abstract class HourlyTimetable extends Timetable {
 		createHourlyGrid();
 		//create scrollpane to contain hourlygrid
 		hourlyGridContainer = new ScrollPane();
-		hourlyGridContainer.setPrefHeight(SCROLL_HEIGHT - HEADER_HEIGHT);
+		hourlyGridContainer.setPrefHeight(HEIGHT - HEADER_HEIGHT);
 		hourlyGridContainer.setMinWidth(WIDTH + PADDING);
 		hourlyGridContainer.setContent(hourlyGrid);
 		//contains the whole view
@@ -169,5 +166,4 @@ public abstract class HourlyTimetable extends Timetable {
 	}
 	//should add timeslot to list, hourlygrid, and add listener to its view
 	public abstract void addTimeslots(Event e, LocalDate date);
-	public abstract boolean isRenderable(Event e, LocalDate d);
 }

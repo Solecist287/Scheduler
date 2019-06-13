@@ -67,15 +67,15 @@ public class MainDisplayController {
             while (change.next()) {
                 if (change.wasAdded()) {
                 	for (Event e : change.getAddedSubList()) {
-                		dayTimetable.addEvent(e);
-                		weekTimetable.addEvent(e);
+                		dayTimetable.onEventAdded(e);
+                		weekTimetable.onEventAdded(e);
                 		//monthTimetable.addEvent(e);
                 		//yearTimetable.addEvent(e);
                 	}
                 } else if (change.wasRemoved()) {
                     for (Event e : change.getRemoved()) {
-                    	dayTimetable.removeEvent(e);
-                    	weekTimetable.removeEvent(e);
+                    	dayTimetable.onEventRemoved(e);
+                    	weekTimetable.onEventRemoved(e);
                     	//monthTimetable.removeEvent(e);
                     	//yearTimetable.removeEvent(e);
                     }

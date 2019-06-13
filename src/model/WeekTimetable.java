@@ -40,14 +40,14 @@ public class WeekTimetable extends HourlyTimetable {
 	}
 
 	@Override
-	public void addEvent(Event e) {
+	public void onEventAdded(Event e) {
 		if (isRenderable(e, lastDateEntered)) {
 			addTimeslots(e, lastDateEntered);
 		}
 	}
 
 	@Override
-	public void removeEvent(Event e) {
+	public void onEventRemoved(Event e) {
 		if (isRenderable(e, lastDateEntered)) {
 			for (int i = 0; i < timeslots.size(); i++) {
 				Timeslot t = timeslots.get(i);

@@ -30,13 +30,13 @@ public class MonthTimetable extends Timetable {
 	}
 
 	@Override
-	public void addEvent(Event e) {
+	public void onEventAdded(Event e) {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void removeEvent(Event e) {
+	public void onEventRemoved(Event e) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -45,6 +45,12 @@ public class MonthTimetable extends Timetable {
 	public void renderEvents(LocalDate date) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean isRenderable(Event e, LocalDate d) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

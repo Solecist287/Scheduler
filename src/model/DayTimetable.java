@@ -10,7 +10,7 @@ import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 public class DayTimetable extends HourlyTimetable {
-	Label headerLabel;
+	private Label headerLabel;
 	
 	public DayTimetable(Stage mainStage, List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
 		super(mainStage, events, initDate, 1, dayOfWeekTemporalField);
@@ -33,14 +33,14 @@ public class DayTimetable extends HourlyTimetable {
 	}
 	
 	@Override
-	public void addEvent(Event e) {
+	public void onEventAdded(Event e) {
 		if (isRenderable(e,lastDateEntered)) {
 			addTimeslots(e, lastDateEntered);
 		}
 	}
 
 	@Override
-	public void removeEvent(Event e) {
+	public void onEventRemoved(Event e) {
 		if (isRenderable(e, lastDateEntered)) {
 			for (int i = 0; i < timeslots.size(); i++) {
         		Timeslot t = timeslots.get(i);

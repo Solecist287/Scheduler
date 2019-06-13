@@ -23,21 +23,10 @@ public class Timeslot {
 		h.setStyle("-fx-background-color: rgb(" + c.getRed()*255 + "," + c.getGreen()*255 + "," + c.getBlue()*255 + ");"
 				+ "-fx-border-color: black;" + "-fx-font-size: 12");
 		//make sure event is not <30 min
-		if (Duration.between(startDateTime, e.getEndDateTime()).toMinutes() < MIN_EVENT_TIME) {
-			//System.out.println("too short: difference is: " +  (e.getEndDateTime().getMinute() - e.getStartDateTime().getMinute()));
-		}else {
+		if (Duration.between(startDateTime, e.getEndDateTime()).toMinutes() >= MIN_EVENT_TIME) {
 			l = new Label(e.getTitle() + "\n" + e.getStartDateTime().toLocalTime() + "-" + e.getEndDateTime().toLocalTime());
 			h.getChildren().add(l);
 		}
-		//label: "starttime am/pm - endtime am/pm"
-		/*
-		int militaryStartHour = e.getStartDateTime().getHour();
-		int startHour = (militaryStartHour%12==0) ? 12 : militaryStartHour%12;//converts hour from military to 12-hour time
-		String startPeriod = militaryStartHour<12 ? "am" : "pm";
-		int militaryEndHour = e.getEndDateTime().getHour();
-		int endHour = (militaryEndHour%12==0) ? 12 : militaryEndHour%12;//converts hour from military to 12-hour time
-		String endPeriod = militaryEndHour<12 ? "am" : "pm";
-		*/
 	}
 	public Event getEvent() {
 		return e;
