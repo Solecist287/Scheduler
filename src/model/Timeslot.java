@@ -22,7 +22,7 @@ public class Timeslot {
 		h = new HBox();
 		h.setStyle("-fx-background-color: rgb(" + c.getRed()*255 + "," + c.getGreen()*255 + "," + c.getBlue()*255 + ");"
 				+ "-fx-border-color: black;" + "-fx-font-size: 12");
-		//make sure event is not <30 min
+		//make sure event is at least minimum event time length (30 min)
 		if (Duration.between(startDateTime, e.getEndDateTime()).toMinutes() >= MIN_EVENT_TIME) {
 			l = new Label(e.getTitle() + "\n" + e.getStartDateTime().toLocalTime() + "-" + e.getEndDateTime().toLocalTime());
 			h.getChildren().add(l);

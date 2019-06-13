@@ -25,7 +25,7 @@ public class DayTimetable extends HourlyTimetable {
 			//update day label
 			updateHeaderLabel(date);
 			//clear timeslots from list and hourlygrid
-			clearTimeslots();
+			clearEventNodes();
 			//draw events that match date
 			renderEvents(date);
 		}

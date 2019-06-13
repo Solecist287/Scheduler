@@ -157,7 +157,7 @@ public abstract class HourlyTimetable extends Timetable {
 		view = container;
 	}
 	//removes timeslots from list and from hourlygrid
-	public void clearTimeslots() {
+	public void clearEventNodes() {
 		//remove timeslot nodes from hourlygrid
 		for (int i = 0; i < timeslots.size(); i++) {
 			hourlyGrid.getChildren().remove(timeslots.get(i).getView());

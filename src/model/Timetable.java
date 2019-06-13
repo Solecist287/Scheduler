@@ -18,8 +18,8 @@ public abstract class Timetable {
 	public List<Event> events;
 	Node view;
 	TemporalField dayOfWeekTemporalField;
-	public static final int WIDTH = 742;
-	public static final int HEIGHT = 500;
+	public static final int WIDTH = 728;//div by 4 and 7...ie 707,714,721,728,763,770,777,784
+	public static final int HEIGHT = 500;//arbitrary
 	public static final int PADDING = 20;//for timetable display
 	int rowNum, rowSize, colNum, colSize;
 	LocalDate lastDateEntered;//highlighted date, if applicable
@@ -34,17 +34,20 @@ public abstract class Timetable {
 	public Node getView() {
 		return view;
 	}
+	//view that represents entire timetable object
 	public abstract void createView();
-	//called to render all applicable events
-	public abstract void renderEvents(LocalDate date);
-	//called to see if event can be rendered to current state of view
-	public abstract boolean isRenderable(Event e, LocalDate d);
 	//reconstructs timeslots if lastdateentered and currentdate not in same time unit
 	public abstract void update(LocalDate date);
 	//adds new timeslot if event is in same timeunit
 	public abstract void onEventAdded(Event e);
 	//removes timeslot if event is in same timeunit
 	public abstract void onEventRemoved(Event e);
+	//method used to clear any nodes related to events
+	public abstract void clearEventNodes();
+	//called to render all applicable events
+	public abstract void renderEvents(LocalDate date);
+	//called to see if event can be rendered to current state of view
+	public abstract boolean isRenderable(Event e, LocalDate d);
 	//called when event is clicked on
 	public void viewEventPopup(Event e) {
 		//create popup stage

@@ -32,7 +32,7 @@ public class WeekTimetable extends HourlyTimetable {
 			//update day labels
 			updateHeaderLabels(date);
 			//clear timeslots from list and hourlygrid
-			clearTimeslots();
+			clearEventNodes();
 			//render events
 			renderEvents(date);
 		}

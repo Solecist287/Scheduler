@@ -53,4 +53,10 @@ public class MonthTimetable extends Timetable {
 		return false;
 	}
 
+	@Override
+	public void clearEventNodes() {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
