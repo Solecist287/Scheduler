@@ -16,26 +16,26 @@ public class DayTimetable extends HourlyTimetable {
 		super(mainStage, events, initDate, 1, dayOfWeekTemporalField);
 		headerLabel = headerLabels.get(0);
 		updateHeaderLabel(initDate);
-		renderEvents(initDate);
+		renderEventNodes(initDate);
 	}
 
 	@Override
-	public void update(LocalDate date) {
-		if (!date.equals(lastDateEntered)) {
+	public void update(LocalDate d) {
+		if (!d.equals(lastDateEntered)) {
 			//update day label
-			updateHeaderLabel(date);
+			updateHeaderLabel(d);
 			//clear timeslots from list and hourlygrid
-			clearEventNodes();
+			clearAllEventNodes();
 			//draw events that match date
-			renderEvents(date);
+			renderEventNodes(d);
 		}
-		lastDateEntered = date;
+		lastDateEntered = d;
 	}
 	
 	@Override
 	public void onEventAdded(Event e) {
 		if (isRenderable(e,lastDateEntered)) {
-			addTimeslots(e, lastDateEntered);
+			addNodes(e, lastDateEntered);
 		}
 	}
 
@@ -59,12 +59,12 @@ public class DayTimetable extends HourlyTimetable {
 	}
 
 	@Override
-	public void addTimeslots(Event e, LocalDate date) {
+	public void addNodes(Event e, LocalDate d) {
 		//make day slice of event for singular timeslot
-		LocalDateTime timeslotStart = (e.getStartDateTime().toLocalDate().isBefore(date))
-				? LocalDateTime.of(date, LocalTime.MIDNIGHT) : e.getStartDateTime();
-		LocalDateTime timeslotEnd = (e.getEndDateTime().toLocalDate().isAfter(date)) 
-				? LocalDateTime.of(date.plusDays(1), LocalTime.MIDNIGHT) : e.getEndDateTime();
+		LocalDateTime timeslotStart = (e.getStartDateTime().toLocalDate().isBefore(d))
+				? LocalDateTime.of(d, LocalTime.MIDNIGHT) : e.getStartDateTime();
+		LocalDateTime timeslotEnd = (e.getEndDateTime().toLocalDate().isAfter(d)) 
+				? LocalDateTime.of(d.plusDays(1), LocalTime.MIDNIGHT) : e.getEndDateTime();
 		System.out.println("timeslot");
 		Timeslot t = new Timeslot(e, timeslotStart, timeslotEnd);
 		timeslots.add(t);
@@ -85,23 +85,23 @@ public class DayTimetable extends HourlyTimetable {
 				&& !end.equals(LocalDateTime.of(d, LocalTime.MIDNIGHT));
 	}
 	
-	private void updateHeaderLabel(LocalDate date) {
-		String dayOfWeekCaps = date.getDayOfWeek().toString();
+	private void updateHeaderLabel(LocalDate d) {
+		String dayOfWeekCaps = d.getDayOfWeek().toString();
 		String dayOfWeek = dayOfWeekCaps.substring(0,1) + dayOfWeekCaps.toLowerCase().substring(1,3);
-		int dayOfMonth = date.getDayOfMonth();
+		int dayOfMonth = d.getDayOfMonth();
 		headerLabel.setText(dayOfWeek + "\n" + dayOfMonth);
 	}
 
 	@Override
-	public void renderEvents(LocalDate date) {
+	public void renderEventNodes(LocalDate d) {
 		for (int i = 0; i < events.size(); i++) {
 			Event e = events.get(i);
 			//search linearly until after last day entered
-			if (e.getStartDateTime().toLocalDate().isAfter(date)) {
+			if (e.getStartDateTime().toLocalDate().isAfter(d)) {
 				break;//stop searching
 			//add events if it doesn't end before input date
-			}else if (isRenderable(e,date)) {
-				addTimeslots(e, date);
+			}else if (isRenderable(e,d)) {
+				addNodes(e, d);
 			}
 		}
 	}

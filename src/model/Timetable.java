@@ -37,15 +37,17 @@ public abstract class Timetable {
 	//view that represents entire timetable object
 	public abstract void createView();
 	//reconstructs timeslots if lastdateentered and currentdate not in same time unit
-	public abstract void update(LocalDate date);
-	//adds new timeslot if event is in same timeunit
+	public abstract void update(LocalDate d);
+	//adds nodes for an event if event is in same timeunit
 	public abstract void onEventAdded(Event e);
-	//removes timeslot if event is in same timeunit
+	//removes nodes for an event if event is in same timeunit
 	public abstract void onEventRemoved(Event e);
-	//method used to clear any nodes related to events
-	public abstract void clearEventNodes();
-	//called to render all applicable events
-	public abstract void renderEvents(LocalDate date);
+	//should add nodes of an event to list, timetable container, and add listeners
+	public abstract void addNodes(Event e, LocalDate d); 
+	//clears all event related nodes
+	public abstract void clearAllEventNodes();
+	//render all applicable event nodes (calls addNodes(e, date), if isRenderable(e,date)==true)
+	public abstract void renderEventNodes(LocalDate d);
 	//called to see if event can be rendered to current state of view
 	public abstract boolean isRenderable(Event e, LocalDate d);
 	//called when event is clicked on
@@ -73,5 +75,6 @@ public abstract class Timetable {
 			ex.printStackTrace();
 		}
 	}
-	public abstract String toString();//displays text for timeunitcombobox
+	//displays text for timeunitcombobox
+	public abstract String toString();
 }

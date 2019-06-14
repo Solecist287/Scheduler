@@ -10,7 +10,6 @@ public class MonthTimetable extends Timetable {
 
 	public MonthTimetable(Stage mainStage, List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
 		super(mainStage, events, initDate, dayOfWeekTemporalField);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -19,9 +18,8 @@ public class MonthTimetable extends Timetable {
 	}
 
 	@Override
-	public void update(LocalDate date) {
-		// TODO Auto-generated method stub
-
+	public void update(LocalDate d) {
+		
 	}
 
 	@Override
@@ -31,31 +29,31 @@ public class MonthTimetable extends Timetable {
 
 	@Override
 	public void onEventAdded(Event e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
 	public void onEventRemoved(Event e) {
-		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void renderEvents(LocalDate date) {
-		// TODO Auto-generated method stub
+	public void renderEventNodes(LocalDate d) {
 		
 	}
 
 	@Override
 	public boolean isRenderable(Event e, LocalDate d) {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
 	@Override
-	public void clearEventNodes() {
-		// TODO Auto-generated method stub
+	public void clearAllEventNodes() {
+		
+	}
+
+	@Override
+	public void addNodes(Event e, LocalDate d) {
 		
 	}
 

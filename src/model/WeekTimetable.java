@@ -14,7 +14,7 @@ public class WeekTimetable extends HourlyTimetable {
 	public WeekTimetable(Stage mainStage, List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
 		super(mainStage, events, initDate, 7, dayOfWeekTemporalField);
 		updateHeaderLabels(initDate);
-		renderEvents(initDate);
+		renderEventNodes(initDate);
 	}
 	
 	//cannot be static as long as temporalfield needs to be instantiated
@@ -26,23 +26,23 @@ public class WeekTimetable extends HourlyTimetable {
 	}
 	
 	@Override
-	public void update(LocalDate date) {
+	public void update(LocalDate d) {
 		//only do render new week if date is in another week than lastDateEntered
-		if (!inTheSameWeek(lastDateEntered, date)) {
+		if (!inTheSameWeek(lastDateEntered, d)) {
 			//update day labels
-			updateHeaderLabels(date);
+			updateHeaderLabels(d);
 			//clear timeslots from list and hourlygrid
-			clearEventNodes();
+			clearAllEventNodes();
 			//render events
-			renderEvents(date);
+			renderEventNodes(d);
 		}
-		lastDateEntered = date;
+		lastDateEntered = d;
 	}
 
 	@Override
 	public void onEventAdded(Event e) {
 		if (isRenderable(e, lastDateEntered)) {
-			addTimeslots(e, lastDateEntered);
+			addNodes(e, lastDateEntered);
 		}
 	}
 
@@ -66,9 +66,9 @@ public class WeekTimetable extends HourlyTimetable {
 	}
 
 	@Override
-	public void addTimeslots(Event e, LocalDate date) {
-		LocalDate startOfWeek = date.with(dayOfWeekTemporalField,1);
-		LocalDate endOfWeek = date.with(dayOfWeekTemporalField,7);
+	public void addNodes(Event e, LocalDate d) {
+		LocalDate startOfWeek = d.with(dayOfWeekTemporalField,1);
+		LocalDate endOfWeek = d.with(dayOfWeekTemporalField,7);
 		LocalDateTime timeslotStart = (e.getStartDateTime().toLocalDate().isBefore(startOfWeek))
 				? LocalDateTime.of(startOfWeek, LocalTime.MIDNIGHT) : e.getStartDateTime();
 		LocalDateTime end = (e.getEndDateTime().toLocalDate().isAfter(endOfWeek)) 
@@ -76,7 +76,7 @@ public class WeekTimetable extends HourlyTimetable {
 		System.out.println("upper end bound is " + end);
 		//make timeslot slices of event for each day that the event spans
 		do {	
-			System.out.println("iteration");
+			//System.out.println("iteration");
 			int weekIndex = timeslotStart.get(dayOfWeekTemporalField);
 			LocalDateTime timeslotEnd = (end.toLocalDate().isAfter(timeslotStart.toLocalDate())) 
 					? timeslotStart.plusDays(1).with(LocalTime.MIDNIGHT) : end;
@@ -86,7 +86,7 @@ public class WeekTimetable extends HourlyTimetable {
 			view.setOnMouseClicked(event -> {
 				viewEventPopup(e);
 			});
-			System.out.println("slice: start is " + timeslotStart + ", end is " + timeslotEnd);
+			//System.out.println("slice: start is " + timeslotStart + ", end is " + timeslotEnd);
 			hourlyGrid.add(view, weekIndex, t.getRow(), 1, t.getRowSpan());
 			timeslotStart = timeslotStart.plusDays(1).with(LocalTime.MIDNIGHT);
 		}while(timeslotStart.isBefore(end));
@@ -102,9 +102,9 @@ public class WeekTimetable extends HourlyTimetable {
 				&& !end.equals(LocalDateTime.of(beforeStartOfWeek.plusDays(1), LocalTime.MIDNIGHT));
 	}
 	
-	private void updateHeaderLabels(LocalDate date) {
+	private void updateHeaderLabels(LocalDate d) {
 		for (int i = 0; i < headerLabels.size(); i++) {
-			LocalDate currentDate = date.with(dayOfWeekTemporalField,i+1);//day indices start at 1
+			LocalDate currentDate = d.with(dayOfWeekTemporalField,i+1);//day indices start at 1
 			Label currentLabel = headerLabels.get(i);
 			//get info for label text
 			String dayOfWeekCaps = currentDate.getDayOfWeek().toString();
@@ -116,17 +116,17 @@ public class WeekTimetable extends HourlyTimetable {
 	}
 
 	@Override
-	public void renderEvents(LocalDate date) {
-		LocalDate startOfWeek = date.with(dayOfWeekTemporalField,1);
-		LocalDate endOfWeek = date.with(dayOfWeekTemporalField,7);
+	public void renderEventNodes(LocalDate d) {
+		LocalDate startOfWeek = d.with(dayOfWeekTemporalField,1);
+		LocalDate endOfWeek = d.with(dayOfWeekTemporalField,7);
 		for (int i = 0; i < events.size(); i++) {
 			Event e = events.get(i);
 			//stop searching once past the end of the week
 			if (e.getStartDateTime().toLocalDate().isAfter(endOfWeek)) {
 				break;//stop searching
 			//add timeslot if falls in the current week or intersects week
-			}else if (isRenderable(e,date)) {
-				addTimeslots(e, date);
+			}else if (isRenderable(e,d)) {
+				addNodes(e, d);
 			}
 		}
 	}

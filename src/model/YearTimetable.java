@@ -19,7 +19,7 @@ public class YearTimetable extends Timetable {
 	}
 
 	@Override
-	public void update(LocalDate date) {
+	public void update(LocalDate d) {
 		// TODO Auto-generated method stub
 
 	}
@@ -42,7 +42,7 @@ public class YearTimetable extends Timetable {
 	}
 
 	@Override
-	public void renderEvents(LocalDate date) {
+	public void renderEventNodes(LocalDate d) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -54,7 +54,13 @@ public class YearTimetable extends Timetable {
 	}
 
 	@Override
-	public void clearEventNodes() {
+	public void clearAllEventNodes() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addNodes(Event e, LocalDate d) {
 		// TODO Auto-generated method stub
 		
 	}
