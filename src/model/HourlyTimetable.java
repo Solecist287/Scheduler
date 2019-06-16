@@ -76,7 +76,7 @@ public abstract class HourlyTimetable extends Timetable {
 					}
 				}else if (j%12==0) {//start of hour, show only top of cell
 					if (i==colNum-1) {
-						p.setStyle(defaultStyle +	"-fx-border-width: 1 1 0 1;");
+						p.setStyle(defaultStyle + "-fx-border-width: 1 1 0 1;");
 					}else {
 						p.setStyle(defaultStyle + "-fx-border-width: 1 0 0 1;");
 					}
@@ -125,18 +125,6 @@ public abstract class HourlyTimetable extends Timetable {
 			}
 		}
 		//set dividing lines between headerLabels
-		if (headerLabels.size()>1) {
-			for (int i = 1; i < headerLabels.size()-1; i++) {
-				Label currentLabel = headerLabels.get(i);
-				String style = "-fx-border-color: black;";
-				if (i == headerLabels.size()-2) {
-					style += "-fx-border-width: 0 1 0 1;";
-				}else {
-					style += "-fx-border-width: 0 0 0 1;";
-				}
-				currentLabel.setStyle(style);
-			}
-		}
 		headerGrid.setStyle("-fx-border-width: 1 1 0 1;" + "-fx-border-color: black;" + "-fx-background-color: white;");
 		//headerGrid.setGridLinesVisible(true);
 	}
