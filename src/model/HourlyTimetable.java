@@ -1,9 +1,9 @@
 package model;
 
 import java.time.LocalDate;
-import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
@@ -25,8 +25,8 @@ public abstract class HourlyTimetable extends Timetable {
 	
 	List<Label> headerLabels;
 	List<Timeslot> timeslots;
-	public HourlyTimetable(Stage mainStage, List<Event> events, LocalDate initDate, int dayNum, TemporalField dayOfWeekTemporalField) {
-		super(mainStage, events, initDate, dayOfWeekTemporalField);
+	public HourlyTimetable(Stage mainStage, List<Event> events, LocalDate initDate, int dayNum, Locale locale) {
+		super(mainStage, events, initDate, locale);
 		this.dayNum = dayNum;
 		//set timetable dimensions
 		rowNum = (24*60)/TIME_INCREMENT;//5 min intervals;

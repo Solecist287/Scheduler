@@ -1,49 +1,53 @@
 package model;
 
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.temporal.TemporalField;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class MonthTimetable extends Timetable {
 	static final int HEADER_HEIGHT = 40;
-	static final int TABLE_HEIGHT = HEIGHT - HEADER_HEIGHT;//500-20=480...div by 6 yay
-	ScrollPane monthGridContainer;
-	GridPane monthGrid, headerGrid;
+
+	List<Label> dayHeaderLabels;
+	List<ListView<Event>> eventLists;
 	
-	public MonthTimetable(Stage mainStage, List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
-		super(mainStage, events, initDate, dayOfWeekTemporalField);
+	ScrollPane monthGridContainer;
+	GridPane monthGrid, dayOfWeekHeader;
+	
+	
+	public MonthTimetable(Stage mainStage, List<Event> events, LocalDate initDate, Locale locale) {
+		super(mainStage, events, initDate, locale);
 		//set timetable dimensions
 		rowNum = 6;
-		//rowSize = TABLE_HEIGHT/6; 
 		colNum = 7;
 		colSize = WIDTH/colNum;
 		rowSize = colSize;
 		//create lists
-		//timeslots = new ArrayList<Timeslot>();
+		dayHeaderLabels = new ArrayList<Label>();
+		eventLists = new ArrayList<ListView<Event>>();
 		//create view
 		createView();
+		updateHeaderLabels(initDate);
 		renderEventNodes(initDate);
 	}
 
 	private void createHeaderGrid() {
-		headerGrid = new GridPane();
+		dayOfWeekHeader = new GridPane();
 		//set column restraints
 		for (int i = 0; i < colNum; i++) {
-			headerGrid.getColumnConstraints().add(new ColumnConstraints(colSize));
+			dayOfWeekHeader.getColumnConstraints().add(new ColumnConstraints(colSize));
 		}
-		headerGrid.getRowConstraints().add(new RowConstraints(HEADER_HEIGHT));
+		dayOfWeekHeader.getRowConstraints().add(new RowConstraints(HEADER_HEIGHT));
 		for (int i = 0; i < colNum; i++) {
 			String dayOfWeek = lastDateEntered.with(dayOfWeekTemporalField, i+1).getDayOfWeek().toString().toLowerCase();
 			String dayOfWeekAbbrev = dayOfWeek.substring(0,1).toUpperCase() + dayOfWeek.substring(1,3);
@@ -54,9 +58,9 @@ public class MonthTimetable extends Timetable {
 			l.setPrefHeight(HEADER_HEIGHT);
 			l.setText(dayOfWeekAbbrev);
 			//add to grid
-			headerGrid.add(l,i,0);
+			dayOfWeekHeader.add(l,i,0);
 		}
-		headerGrid.setStyle("-fx-border-width: 1 1 0 1;" + "-fx-border-color: black;" + "-fx-background-color: white;");
+		dayOfWeekHeader.setStyle("-fx-border-width: 1 1 0 1;" + "-fx-border-color: black;" + "-fx-background-color: white;");
 		//headerGrid.setGridLinesVisible(true);
 	}
 	private void createMonthGrid() {
@@ -69,11 +73,11 @@ public class MonthTimetable extends Timetable {
 			monthGrid.getRowConstraints().add(new RowConstraints(rowSize));
 		}
 		//draw tiles
-		for (int i = 0; i < colNum; i++) {
-			for (int j = 0; j < rowNum; j++) {
-				Pane p = new Pane();//will not be used for first column since we use hour labels
-				p.setPrefWidth(colSize);
-				p.setPrefHeight(rowSize);
+		for (int j = 0; j < rowNum; j++) {
+			for (int i = 0; i < colNum; i++) {
+				VBox container = new VBox();//will not be used for first column since we use hour labels
+				container.setPrefWidth(colSize);
+				container.setPrefHeight(rowSize);
 				String style = "-fx-background-color: white; -fx-border-color: black black black black;";
 				if (j == rowNum-1) {//last row
 					if (i == colNum-1) {
@@ -88,8 +92,22 @@ public class MonthTimetable extends Timetable {
 						style += "-fx-border-width: 1 0 0 1;";
 					}
 				}
-				p.setStyle(style);
-				monthGrid.add(p, i, j);
+				//set style for container
+				container.setStyle(style);
+				//create components for container
+				Label l = new Label();
+				l.setAlignment(Pos.CENTER);
+				l.setPrefWidth(colSize);
+				l.setPrefHeight(HEADER_HEIGHT);
+				l.setStyle("-fx-background-color: white;");
+				ListView <Event> lv = new ListView<Event>();
+				//add to list
+				dayHeaderLabels.add(l);
+				eventLists.add(lv);
+				//add components to container
+				container.getChildren().addAll(l,lv);
+				//add to grid
+				monthGrid.add(container, i, j);
 			}
 		}
 	}
@@ -100,7 +118,6 @@ public class MonthTimetable extends Timetable {
 		createHeaderGrid();
 		createMonthGrid();
 		//create scrollpane to contain hourlygrid
-		
 		monthGridContainer = new ScrollPane();
 		monthGridContainer.setPrefHeight(HEIGHT - HEADER_HEIGHT);
 		monthGridContainer.setMinWidth(WIDTH + PADDING);
@@ -108,14 +125,23 @@ public class MonthTimetable extends Timetable {
 		
 		//contains the whole view
 		VBox container = new VBox();
-		container.getChildren().addAll(headerGrid, monthGridContainer);
+		container.getChildren().addAll(dayOfWeekHeader, monthGridContainer);
 		//set view
 		view = container;
 	}
 
 	@Override
 	public void update(LocalDate d) {
-		
+		//only do render new week if date is in another week than lastDateEntered
+		if (!d.getMonth().equals(lastDateEntered.getMonth()) || d.getYear()!=lastDateEntered.getYear()) {
+			//update day labels
+			updateHeaderLabels(d);
+			//clear timeslots from list and hourlygrid
+			clearAllEventNodes();
+			//render events
+			renderEventNodes(d);
+		}
+		lastDateEntered = d;
 	}
 
 	@Override
@@ -152,5 +178,20 @@ public class MonthTimetable extends Timetable {
 	public void addNodes(Event e, LocalDate d) {
 		
 	}
-
+	//FIX, just copied from weektimetable
+	private void updateHeaderLabels(LocalDate d) {
+		LocalDate date = d.withDayOfMonth(1).with(dayOfWeekTemporalField,1);//first date of first week of month
+		for (int i = 0; i < dayHeaderLabels.size(); i++) {
+			Label currentLabel = dayHeaderLabels.get(i);
+			int dayOfMonth = date.getDayOfMonth();
+			if (dayOfMonth == 1) {
+				String monthName = date.getMonth().toString().toLowerCase();
+				String monthNameAbbrev = monthName.substring(0,1).toUpperCase() + monthName.substring(1,3);
+				currentLabel.setText(monthNameAbbrev + " " + date.getDayOfMonth());
+			}else {
+				currentLabel.setText(date.getDayOfMonth() + "");
+			}
+			date = date.plusDays(1);
+		}
+	}
 }

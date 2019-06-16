@@ -3,16 +3,17 @@ package model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.TemporalField;
 import java.util.List;
+import java.util.Locale;
+
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
 
 public class WeekTimetable extends HourlyTimetable {
 
-	public WeekTimetable(Stage mainStage, List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
-		super(mainStage, events, initDate, 7, dayOfWeekTemporalField);
+	public WeekTimetable(Stage mainStage, List<Event> events, LocalDate initDate, Locale locale) {
+		super(mainStage, events, initDate, 7, locale);
 		updateHeaderLabels(initDate);
 		renderEventNodes(initDate);
 	}
@@ -117,7 +118,6 @@ public class WeekTimetable extends HourlyTimetable {
 
 	@Override
 	public void renderEventNodes(LocalDate d) {
-		LocalDate startOfWeek = d.with(dayOfWeekTemporalField,1);
 		LocalDate endOfWeek = d.with(dayOfWeekTemporalField,7);
 		for (int i = 0; i < events.size(); i++) {
 			Event e = events.get(i);

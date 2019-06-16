@@ -69,14 +69,14 @@ public class MainDisplayController {
                 	for (Event e : change.getAddedSubList()) {
                 		dayTimetable.onEventAdded(e);
                 		weekTimetable.onEventAdded(e);
-                		//monthTimetable.addEvent(e);
-                		//yearTimetable.addEvent(e);
+                		monthTimetable.onEventAdded(e);
+                		//yearTimetable.onEventAdded(e);
                 	}
                 } else if (change.wasRemoved()) {
                     for (Event e : change.getRemoved()) {
                     	dayTimetable.onEventRemoved(e);
                     	weekTimetable.onEventRemoved(e);
-                    	//monthTimetable.removeEvent(e);
+                    	monthTimetable.onEventRemoved(e);
                     	//yearTimetable.removeEvent(e);
                     }
                 }
@@ -107,10 +107,10 @@ public class MainDisplayController {
 		//add calendar display to left side of screen
 		calendarView.getChildren().add(0,datePickerSkinPopupContent);
 		//create timetables
-		dayTimetable = new DayTimetable(primaryStage, events, today, dayOfWeekTemporalField);
-		weekTimetable = new WeekTimetable(primaryStage, events, today, dayOfWeekTemporalField);
-		monthTimetable = new MonthTimetable(primaryStage, events, today, dayOfWeekTemporalField);
-		yearTimetable = new YearTimetable(primaryStage, events, today, dayOfWeekTemporalField);
+		dayTimetable = new DayTimetable(primaryStage, events, today, localeSetting);
+		weekTimetable = new WeekTimetable(primaryStage, events, today, localeSetting);
+		monthTimetable = new MonthTimetable(primaryStage, events, today, localeSetting);
+		yearTimetable = new YearTimetable(primaryStage, events, today, localeSetting);
 		//populate combobox with timetables
 		timeUnitComboBox.getItems().addAll(dayTimetable, weekTimetable, monthTimetable, yearTimetable);
 		//add listener to timeUnitComboBox

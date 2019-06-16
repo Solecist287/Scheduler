@@ -11,7 +11,7 @@ import javafx.scene.paint.Color;
 public class Timeslot {
 	private LocalDateTime startDateTime, endDateTime;
 	private Event e;
-	private HBox h;
+	private HBox view;
 	private Label l;
 	private final int MIN_EVENT_TIME = 35;
 	public Timeslot(Event e, LocalDateTime startDateTime, LocalDateTime endDateTime) {
@@ -19,20 +19,20 @@ public class Timeslot {
 		this.startDateTime = startDateTime;
 		this.endDateTime = endDateTime;
 		Color c = e.getBackgroundColor();
-		h = new HBox();
-		h.setStyle("-fx-background-color: rgb(" + c.getRed()*255 + "," + c.getGreen()*255 + "," + c.getBlue()*255 + ");"
+		view = new HBox();
+		view.setStyle("-fx-background-color: rgb(" + c.getRed()*255 + "," + c.getGreen()*255 + "," + c.getBlue()*255 + ");"
 				+ "-fx-border-color: black;" + "-fx-font-size: 12");
 		//make sure event is at least minimum event time length (30 min)
 		if (Duration.between(startDateTime, e.getEndDateTime()).toMinutes() >= MIN_EVENT_TIME) {
 			l = new Label(e.getTitle() + "\n" + e.getStartDateTime().toLocalTime() + "-" + e.getEndDateTime().toLocalTime());
-			h.getChildren().add(l);
+			view.getChildren().add(l);
 		}
 	}
 	public Event getEvent() {
 		return e;
 	}
 	public HBox getView() {
-		return h;
+		return view;
 	}
 	public int getRowSpan() {
 		return (int)(Duration.between(startDateTime, endDateTime).abs().toMinutes())/5;

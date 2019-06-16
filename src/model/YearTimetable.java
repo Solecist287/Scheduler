@@ -1,15 +1,15 @@
 package model;
 
 import java.time.LocalDate;
-import java.time.temporal.TemporalField;
 import java.util.List;
+import java.util.Locale;
 
 import javafx.stage.Stage;
 
 public class YearTimetable extends Timetable {
 
-	public YearTimetable(Stage mainStage, List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
-		super(mainStage, events, initDate, dayOfWeekTemporalField);
+	public YearTimetable(Stage mainStage, List<Event> events, LocalDate initDate, Locale locale) {
+		super(mainStage, events, initDate, locale);
 		// TODO Auto-generated constructor stub
 	}
 

@@ -3,7 +3,9 @@ package model;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.TemporalField;
+import java.time.temporal.WeekFields;
 import java.util.List;
+import java.util.Locale;
 
 import controller.ViewEventPopupController;
 import javafx.fxml.FXMLLoader;
@@ -17,6 +19,7 @@ public abstract class Timetable {
 	Stage mainStage;
 	public List<Event> events;
 	Node view;
+	Locale locale;
 	TemporalField dayOfWeekTemporalField;
 	public static final int WIDTH = 728;//div by 4 and 7...ie 707,714,721,728,763,770,777,784
 	public static final int HEIGHT = 500;//arbitrary
@@ -24,11 +27,14 @@ public abstract class Timetable {
 	int rowNum, rowSize, colNum, colSize;
 	LocalDate lastDateEntered;//highlighted date, if applicable
 	
-	public Timetable(Stage mainStage, List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
+	public Timetable(Stage mainStage, List<Event> events, LocalDate initDate, Locale locale) {
 		this.mainStage = mainStage;
 		this.events = events;
 		lastDateEntered = initDate;
-		this.dayOfWeekTemporalField = dayOfWeekTemporalField;
+		this.locale = locale;
+		//set temporal field in order to know "beginning" of week like sunday,monday,etc.
+		dayOfWeekTemporalField = WeekFields.of(locale).dayOfWeek();
+		
 		view = null;
 	}
 	public Node getView() {

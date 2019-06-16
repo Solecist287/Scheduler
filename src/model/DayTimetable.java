@@ -3,8 +3,9 @@ package model;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.time.temporal.TemporalField;
 import java.util.List;
+import java.util.Locale;
+
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
@@ -12,8 +13,8 @@ import javafx.stage.Stage;
 public class DayTimetable extends HourlyTimetable {
 	private Label headerLabel;
 	
-	public DayTimetable(Stage mainStage, List<Event> events, LocalDate initDate, TemporalField dayOfWeekTemporalField) {
-		super(mainStage, events, initDate, 1, dayOfWeekTemporalField);
+	public DayTimetable(Stage mainStage, List<Event> events, LocalDate initDate, Locale locale) {
+		super(mainStage, events, initDate, 1, locale);
 		headerLabel = headerLabels.get(0);
 		updateHeaderLabel(initDate);
 		renderEventNodes(initDate);
