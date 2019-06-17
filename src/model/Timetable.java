@@ -49,11 +49,11 @@ public abstract class Timetable {
 	//removes nodes for an event if event is in same timeunit
 	public abstract void onEventRemoved(Event e);
 	//should add nodes of an event to list, timetable container, and add listeners
-	public abstract void addNodes(Event e, LocalDate d); 
+	public abstract void addViews(Event e, LocalDate d); 
 	//clears all event related nodes
-	public abstract void clearAllEventNodes();
+	public abstract void clearAllEventViews();
 	//render all applicable event nodes (calls addNodes(e, date), if isRenderable(e,date)==true)
-	public abstract void renderEventNodes(LocalDate d);
+	public abstract void renderEventViews(LocalDate d);
 	//called to see if event can be rendered to current state of view
 	public abstract boolean isRenderable(Event e, LocalDate d);
 	//called when event is clicked on

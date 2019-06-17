@@ -42,7 +42,7 @@ public class YearTimetable extends Timetable {
 	}
 
 	@Override
-	public void renderEventNodes(LocalDate d) {
+	public void renderEventViews(LocalDate d) {
 		// TODO Auto-generated method stub
 		
 	}
@@ -54,13 +54,13 @@ public class YearTimetable extends Timetable {
 	}
 
 	@Override
-	public void clearAllEventNodes() {
+	public void clearAllEventViews() {
 		// TODO Auto-generated method stub
 		
 	}
 
 	@Override
-	public void addNodes(Event e, LocalDate d) {
+	public void addViews(Event e, LocalDate d) {
 		// TODO Auto-generated method stub
 		
 	}

@@ -1,11 +1,16 @@
 package model;
 
+import java.time.Duration;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
@@ -17,7 +22,7 @@ import javafx.stage.Stage;
 
 public class MonthTimetable extends Timetable {
 	static final int HEADER_HEIGHT = 40;
-
+	static final int NUM_DAYS = 42;
 	List<Label> dayHeaderLabels;
 	List<ListView<Event>> eventLists;
 	
@@ -38,7 +43,7 @@ public class MonthTimetable extends Timetable {
 		//create view
 		createView();
 		updateHeaderLabels(initDate);
-		renderEventNodes(initDate);
+		renderEventViews(initDate);
 	}
 
 	private void createHeaderGrid() {
@@ -137,9 +142,9 @@ public class MonthTimetable extends Timetable {
 			//update day labels
 			updateHeaderLabels(d);
 			//clear timeslots from list and hourlygrid
-			clearAllEventNodes();
+			clearAllEventViews();
 			//render events
-			renderEventNodes(d);
+			renderEventViews(d);
 		}
 		lastDateEntered = d;
 	}
@@ -151,34 +156,73 @@ public class MonthTimetable extends Timetable {
 
 	@Override
 	public void onEventAdded(Event e) {
-		
+		if (isRenderable(e, lastDateEntered)) {
+			addViews(e, lastDateEntered);
+		}
 	}
-
 	@Override
 	public void onEventRemoved(Event e) {
-		
+		if (isRenderable(e, lastDateEntered)) {
+			for (int i = 0; i < eventLists.size(); i++) {
+				eventLists.get(i).getItems().remove(e);
+        	}
+		}
 	}
-
 	@Override
-	public void renderEventNodes(LocalDate d) {
-		
+	public void renderEventViews(LocalDate d) {
+		LocalDate endOfTimeframe = d.withDayOfMonth(1).with(dayOfWeekTemporalField,1).plusDays(NUM_DAYS-1);
+		for (int i = 0; i < events.size(); i++) {
+			Event e = events.get(i);
+			//stop searching once past the end of the week
+			if (e.getStartDateTime().toLocalDate().isAfter(endOfTimeframe)) {
+				break;//stop searching
+			//add timeslot if falls in the current week or intersects week
+			}else if (isRenderable(e,d)) {
+				addViews(e, d);
+			}
+		}
 	}
 
 	@Override
 	public boolean isRenderable(Event e, LocalDate d) {
-		return false;
+		LocalDateTime start = e.getStartDateTime();
+		LocalDateTime end = e.getEndDateTime();
+		LocalDate beforeTimeframe = d.withDayOfMonth(1).with(dayOfWeekTemporalField,1).minusDays(1);
+		LocalDate afterTimeframe = beforeTimeframe.plusDays(NUM_DAYS+1);
+		return start.toLocalDate().isBefore(afterTimeframe) && end.toLocalDate().isAfter(beforeTimeframe)
+				&& !end.equals(LocalDateTime.of(beforeTimeframe.plusDays(1), LocalTime.MIDNIGHT));
 	}
 
 	@Override
-	public void clearAllEventNodes() {
-		
+	public void clearAllEventViews() {
+		for (int i = 0; i < eventLists.size(); i++) {
+			eventLists.get(i).getItems().clear();
+		}
 	}
 
 	@Override
-	public void addNodes(Event e, LocalDate d) {
-		
+	public void addViews(Event e, LocalDate d) {
+		LocalDate startOfTimeframe = d.withDayOfMonth(1).with(dayOfWeekTemporalField,1);
+		LocalDate endOfTimeframe = startOfTimeframe.plusDays(NUM_DAYS-1);
+		LocalDate startDate = (e.getStartDateTime().toLocalDate().isBefore(startOfTimeframe))
+				? startOfTimeframe : e.getStartDateTime().toLocalDate();
+		LocalDate endDate = e.getEndDateTime().toLocalDate();//upper bound
+		if (e.getEndDateTime().toLocalDate().isAfter(endOfTimeframe)) {
+			endDate = endOfTimeframe;
+		}else if (e.getEndDateTime().toLocalTime().equals(LocalTime.MIDNIGHT)) {
+			endDate = endDate.minusDays(1);
+		}
+		int daySpan = (int)startDate.until(endDate, ChronoUnit.DAYS);
+		int index = (int)startOfTimeframe.until(startDate, ChronoUnit.DAYS);
+		int bound = index + daySpan;
+		//System.out.println("upper end bound is " + end);
+		//make timeslot slices of event for each day that the event spans
+		do {	
+			//System.out.println("iteration");
+			eventLists.get(index).getItems().add(e);
+			index++;
+		}while(index <= bound);
 	}
-	//FIX, just copied from weektimetable
 	private void updateHeaderLabels(LocalDate d) {
 		LocalDate date = d.withDayOfMonth(1).with(dayOfWeekTemporalField,1);//first date of first week of month
 		for (int i = 0; i < dayHeaderLabels.size(); i++) {

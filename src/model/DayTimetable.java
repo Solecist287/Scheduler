@@ -17,7 +17,7 @@ public class DayTimetable extends HourlyTimetable {
 		super(mainStage, events, initDate, 1, locale);
 		headerLabel = headerLabels.get(0);
 		updateHeaderLabel(initDate);
-		renderEventNodes(initDate);
+		renderEventViews(initDate);
 	}
 
 	@Override
@@ -26,9 +26,9 @@ public class DayTimetable extends HourlyTimetable {
 			//update day label
 			updateHeaderLabel(d);
 			//clear timeslots from list and hourlygrid
-			clearAllEventNodes();
+			clearAllEventViews();
 			//draw events that match date
-			renderEventNodes(d);
+			renderEventViews(d);
 		}
 		lastDateEntered = d;
 	}
@@ -36,7 +36,7 @@ public class DayTimetable extends HourlyTimetable {
 	@Override
 	public void onEventAdded(Event e) {
 		if (isRenderable(e,lastDateEntered)) {
-			addNodes(e, lastDateEntered);
+			addViews(e, lastDateEntered);
 		}
 	}
 
@@ -60,7 +60,7 @@ public class DayTimetable extends HourlyTimetable {
 	}
 
 	@Override
-	public void addNodes(Event e, LocalDate d) {
+	public void addViews(Event e, LocalDate d) {
 		//make day slice of event for singular timeslot
 		LocalDateTime timeslotStart = (e.getStartDateTime().toLocalDate().isBefore(d))
 				? LocalDateTime.of(d, LocalTime.MIDNIGHT) : e.getStartDateTime();
@@ -94,7 +94,7 @@ public class DayTimetable extends HourlyTimetable {
 	}
 
 	@Override
-	public void renderEventNodes(LocalDate d) {
+	public void renderEventViews(LocalDate d) {
 		for (int i = 0; i < events.size(); i++) {
 			Event e = events.get(i);
 			//search linearly until after last day entered
@@ -102,7 +102,7 @@ public class DayTimetable extends HourlyTimetable {
 				break;//stop searching
 			//add events if it doesn't end before input date
 			}else if (isRenderable(e,d)) {
-				addNodes(e, d);
+				addViews(e, d);
 			}
 		}
 	}

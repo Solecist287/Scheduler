@@ -15,7 +15,7 @@ public class WeekTimetable extends HourlyTimetable {
 	public WeekTimetable(Stage mainStage, List<Event> events, LocalDate initDate, Locale locale) {
 		super(mainStage, events, initDate, 7, locale);
 		updateHeaderLabels(initDate);
-		renderEventNodes(initDate);
+		renderEventViews(initDate);
 	}
 	
 	//cannot be static as long as temporalfield needs to be instantiated
@@ -33,9 +33,9 @@ public class WeekTimetable extends HourlyTimetable {
 			//update day labels
 			updateHeaderLabels(d);
 			//clear timeslots from list and hourlygrid
-			clearAllEventNodes();
+			clearAllEventViews();
 			//render events
-			renderEventNodes(d);
+			renderEventViews(d);
 		}
 		lastDateEntered = d;
 	}
@@ -43,7 +43,7 @@ public class WeekTimetable extends HourlyTimetable {
 	@Override
 	public void onEventAdded(Event e) {
 		if (isRenderable(e, lastDateEntered)) {
-			addNodes(e, lastDateEntered);
+			addViews(e, lastDateEntered);
 		}
 	}
 
@@ -67,7 +67,7 @@ public class WeekTimetable extends HourlyTimetable {
 	}
 
 	@Override
-	public void addNodes(Event e, LocalDate d) {
+	public void addViews(Event e, LocalDate d) {
 		LocalDate startOfWeek = d.with(dayOfWeekTemporalField,1);
 		LocalDate endOfWeek = d.with(dayOfWeekTemporalField,7);
 		LocalDateTime timeslotStart = (e.getStartDateTime().toLocalDate().isBefore(startOfWeek))
@@ -117,7 +117,7 @@ public class WeekTimetable extends HourlyTimetable {
 	}
 
 	@Override
-	public void renderEventNodes(LocalDate d) {
+	public void renderEventViews(LocalDate d) {
 		LocalDate endOfWeek = d.with(dayOfWeekTemporalField,7);
 		for (int i = 0; i < events.size(); i++) {
 			Event e = events.get(i);
@@ -126,7 +126,7 @@ public class WeekTimetable extends HourlyTimetable {
 				break;//stop searching
 			//add timeslot if falls in the current week or intersects week
 			}else if (isRenderable(e,d)) {
-				addNodes(e, d);
+				addViews(e, d);
 			}
 		}
 	}
