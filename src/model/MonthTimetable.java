@@ -12,12 +12,17 @@ import java.util.Locale;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.SelectionMode;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 public class MonthTimetable extends Timetable {
@@ -100,12 +105,45 @@ public class MonthTimetable extends Timetable {
 				//set style for container
 				container.setStyle(style);
 				//create components for container
+				//label stuff
 				Label l = new Label();
 				l.setAlignment(Pos.CENTER);
 				l.setPrefWidth(colSize);
 				l.setPrefHeight(HEADER_HEIGHT);
 				l.setStyle("-fx-background-color: white;");
+				//listview stuff
 				ListView <Event> lv = new ListView<Event>();
+				lv.setCellFactory(x -> {
+					return new ListCell<Event>() {
+						@Override
+						protected void updateItem(Event item, boolean empty) {
+							super.updateItem(item,empty);
+							if (item == null) {
+				                setGraphic(null);
+				                setText(null);
+				                setStyle(null);
+				                setOnMouseClicked(null);
+							}else {
+								Color c = item.getBackgroundColor();
+								int militaryHour = item.getStartDateTime().getHour();
+								int hour = (militaryHour%12==0) ? 12 : (militaryHour)%12;
+								String period = (militaryHour)<12 ? "am" : "pm";
+								String originalTime = item.getStartDateTime().toLocalTime().toString();
+								String text = item.getTitle() + " " + hour + originalTime.substring(2) + period;
+								setGraphic(null);
+								setText(text);
+								setStyle("-fx-background-color: rgb(" + c.getRed()*255 + "," + c.getGreen()*255 + "," + c.getBlue()*255 + ");"
+										+ "-fx-border-color: black;" + "-fx-font-size: 12");
+								setOnMouseClicked(event -> {
+									viewEventPopup(item);
+									updateSelected(false);
+								});
+								
+							}
+						}
+					};
+				});
+				lv.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
 				//add to list
 				dayHeaderLabels.add(l);
 				eventLists.add(lv);
@@ -165,6 +203,7 @@ public class MonthTimetable extends Timetable {
 		if (isRenderable(e, lastDateEntered)) {
 			for (int i = 0; i < eventLists.size(); i++) {
 				eventLists.get(i).getItems().remove(e);
+				//eventLists.get(i).getSelectionModel().
         	}
 		}
 	}
