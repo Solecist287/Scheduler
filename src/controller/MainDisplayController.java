@@ -46,7 +46,6 @@ public class MainDisplayController {
 	//may not need to save day/week/month/yeartimetables to vars
 	private Timetable dayTimetable, weekTimetable, monthTimetable, yearTimetable, selectedTimetable;
 	
-	private CalendarModel cmodel;
 	private ObservableList<Event> events; 
 	
 	private Stage primaryStage;
@@ -59,7 +58,6 @@ public class MainDisplayController {
 	
 	public void start(Stage primaryStage, CalendarModel cmodel) {
 		this.primaryStage = primaryStage;
-		this.cmodel = cmodel;
 		//retrieve events and set listener to update selectedtimetable
 		events = cmodel.getEvents();
 		events.addListener((ListChangeListener<Event>) change -> {

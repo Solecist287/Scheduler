@@ -1,9 +1,7 @@
 package model;
 
 import java.io.Serializable;
-import java.time.Duration;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 
 import javafx.scene.paint.Color;
 
