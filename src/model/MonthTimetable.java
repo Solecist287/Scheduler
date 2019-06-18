@@ -1,6 +1,5 @@
 package model;
 
-import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -10,16 +9,15 @@ import java.util.List;
 import java.util.Locale;
 
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.SelectionMode;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -105,11 +103,11 @@ public class MonthTimetable extends Timetable {
 				container.setStyle(style);
 				//create components for container
 				//label stuff
-				Label l = new Label();
-				l.setAlignment(Pos.CENTER);
-				l.setPrefWidth(colSize);
-				l.setPrefHeight(HEADER_HEIGHT);
-				l.setStyle("-fx-background-color: white;");
+				Label header = new Label();
+				header.setAlignment(Pos.CENTER);
+				header.setPrefWidth(colSize);
+				header.setPrefHeight(HEADER_HEIGHT);
+				header.setStyle("-fx-background-color: white;");
 				//listview stuff
 				ListView <Event> lv = new ListView<Event>();
 				lv.setCellFactory(x -> {
@@ -122,31 +120,32 @@ public class MonthTimetable extends Timetable {
 				                setText(null);
 				                setStyle(null);
 				                setOnMouseClicked(null);
+				                updateSelected(false);
 							}else {
 								Color c = item.getBackgroundColor();
-								int militaryHour = item.getStartDateTime().getHour();
-								int hour = (militaryHour%12==0) ? 12 : (militaryHour)%12;
-								String period = (militaryHour)<12 ? "am" : "pm";
-								String originalTime = item.getStartDateTime().toLocalTime().toString();
-								String text = item.getTitle() + " " + hour + originalTime.substring(2) + period;
+								String formattedTime = TimeUtilities.formatTime(item.getStartDateTime().toLocalTime());
+								String text = item.getTitle() + " " + formattedTime;
 								setGraphic(null);
 								setText(text);
+								setPrefWidth(WIDTH/colNum - PADDING);
 								setStyle("-fx-background-color: rgb(" + c.getRed()*255 + "," + c.getGreen()*255 + "," + c.getBlue()*255 + ");"
 										+ "-fx-border-color: black;" + "-fx-font-size: 12");
 								setOnMouseClicked(event -> {
 									viewEventPopup(item);
 									updateSelected(false);
 								});
+								updateSelected(false);
 							}
 						}
 					};
 				});
 				lv.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+				
 				//add to list
-				dayHeaderLabels.add(l);
+				dayHeaderLabels.add(header);
 				eventLists.add(lv);
 				//add components to container
-				container.getChildren().addAll(l,lv);
+				container.getChildren().addAll(header,lv);
 				//add to grid
 				monthGrid.add(container, i, j);
 			}
