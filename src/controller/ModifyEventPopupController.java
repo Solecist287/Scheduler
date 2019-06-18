@@ -2,6 +2,7 @@ package controller;
 
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 
 import javafx.fxml.FXML;
@@ -16,6 +17,7 @@ import javafx.scene.control.Alert.AlertType;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import model.Event;
+import model.TimeUtilities;
 
 public class ModifyEventPopupController {
 	
@@ -24,7 +26,7 @@ public class ModifyEventPopupController {
 	@FXML
 	DatePicker startDatePicker, endDatePicker;
 	@FXML
-	ComboBox<LocalTime> startTimeComboBox, endTimeComboBox;
+	ComboBox<String> startTimeComboBox, endTimeComboBox;
 	@FXML
 	TextArea descriptionTextArea;
 	@FXML
@@ -35,7 +37,7 @@ public class ModifyEventPopupController {
 	private Event selectedEvent;
 	private List<Event> events;
 	private Stage primaryStage;
-	private int comboBoxWidth = 77;//specific, but perfectly fits time choices
+	private int comboBoxWidth = 100;//specific, but perfectly fits time choices
 	private final int TIME_INCREMENT = 5;
 	
 	public void start(Stage primaryStage, List<Event> events, Event e) {
@@ -45,13 +47,14 @@ public class ModifyEventPopupController {
 		LocalTime t = LocalTime.MIDNIGHT;
 		//fill ComboBoxes with time choices for event
 		do {
-			startTimeComboBox.getItems().add(t);
-			endTimeComboBox.getItems().add(t);
+			String formattedTime = TimeUtilities.formatComboBoxTime(t);
+			startTimeComboBox.getItems().add(formattedTime);
+			endTimeComboBox.getItems().add(formattedTime);
 			t = t.plusMinutes(TIME_INCREMENT);
 		} while(!t.equals(LocalTime.MIDNIGHT));
 		//set ComboBox widths
-		startTimeComboBox.setStyle("-fx-pref-width: " + comboBoxWidth);
-		endTimeComboBox.setStyle("-fx-pref-width: " + comboBoxWidth);
+		startTimeComboBox.setPrefWidth(comboBoxWidth);
+		endTimeComboBox.setPrefWidth(comboBoxWidth);
 		//set title
 		titleTextField.setText(e.getTitle());
 		//set date
@@ -59,9 +62,11 @@ public class ModifyEventPopupController {
 		startDatePicker.setShowWeekNumbers(false);
 		endDatePicker.setValue(e.getEndDateTime().toLocalDate());
 		endDatePicker.setShowWeekNumbers(false);
-		//set comboboxes to event starttime
-		startTimeComboBox.getSelectionModel().select(e.getStartDateTime().toLocalTime());
-		endTimeComboBox.getSelectionModel().select(e.getEndDateTime().toLocalTime());
+		//set comboboxes to event starttime and endtime
+		int startTimeIndex = (int)LocalTime.MIDNIGHT.until(e.getStartDateTime().toLocalTime(), ChronoUnit.MINUTES)/TIME_INCREMENT;
+		int endTimeIndex = (int)LocalTime.MIDNIGHT.until(e.getEndDateTime().toLocalTime(), ChronoUnit.MINUTES)/TIME_INCREMENT;
+		startTimeComboBox.getSelectionModel().select(startTimeIndex);
+		endTimeComboBox.getSelectionModel().select(endTimeIndex);
 		//set description
 		descriptionTextArea.setText(e.getDescription());
 		//set color
@@ -73,8 +78,12 @@ public class ModifyEventPopupController {
 		//fields for event object
 		String title = titleTextField.getText();
 		String description = descriptionTextArea.getText();
-		LocalDateTime startDateTime = LocalDateTime.of(startDatePicker.getValue(), startTimeComboBox.getValue());
-		LocalDateTime endDateTime = LocalDateTime.of(endDatePicker.getValue(), endTimeComboBox.getValue());
+		//time variables
+		LocalTime startTime = LocalTime.MIDNIGHT.plusMinutes(startTimeComboBox.getSelectionModel().getSelectedIndex() * TIME_INCREMENT);
+		LocalTime endTime = LocalTime.MIDNIGHT.plusMinutes(endTimeComboBox.getSelectionModel().getSelectedIndex() * TIME_INCREMENT);
+		
+		LocalDateTime startDateTime = LocalDateTime.of(startDatePicker.getValue(), startTime);
+		LocalDateTime endDateTime = LocalDateTime.of(endDatePicker.getValue(), endTime);
 		Color color = backgroundColorPicker.getValue();
 		//check if title is empty
 		if (title.isEmpty() || title == null) {

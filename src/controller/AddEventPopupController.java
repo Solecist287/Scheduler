@@ -16,8 +16,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import model.CalendarModel;
 import model.Event;
+import model.TimeUtilities;
 
 public class AddEventPopupController {
 	@FXML
@@ -25,7 +25,7 @@ public class AddEventPopupController {
 	@FXML
 	DatePicker startDatePicker, endDatePicker;
 	@FXML
-	ComboBox<LocalTime> startTimeComboBox, endTimeComboBox;
+	ComboBox<String> startTimeComboBox, endTimeComboBox;
 	@FXML
 	TextArea descriptionTextArea;
 	@FXML
@@ -33,25 +33,24 @@ public class AddEventPopupController {
 	@FXML
 	Button saveButton;
 	
-	private CalendarModel cmodel;
 	private List<Event> events;
 	private Stage primaryStage;
-	private int comboBoxWidth = 77;//specific, but perfectly fits time choices
+	private int comboBoxWidth = 100;//specific, but perfectly fits time choices
 	private final int TIME_INCREMENT = 5;
-	public void start(Stage primaryStage, CalendarModel cmodel, List<Event> events, LocalDate initDate) {
+	public void start(Stage primaryStage, List<Event> events, LocalDate initDate) {
 		this.primaryStage = primaryStage;
-		this.cmodel = cmodel;
 		this.events = events;
 		LocalTime t = LocalTime.MIDNIGHT;
 		//fill ComboBoxes with time choices for event
 		do {
-			startTimeComboBox.getItems().add(t);
-			endTimeComboBox.getItems().add(t);
+			String formattedTime = TimeUtilities.formatComboBoxTime(t);
+			startTimeComboBox.getItems().add(formattedTime);
+			endTimeComboBox.getItems().add(formattedTime);
 			t = t.plusMinutes(TIME_INCREMENT);
 		} while(!t.equals(LocalTime.MIDNIGHT));
 		//set ComboBox widths
-		startTimeComboBox.setStyle("-fx-pref-width: " + comboBoxWidth);
-		endTimeComboBox.setStyle("-fx-pref-width: " + comboBoxWidth);
+		startTimeComboBox.setPrefWidth(comboBoxWidth);
+		endTimeComboBox.setPrefWidth(comboBoxWidth);
 		//set default values
 		titleTextField.setText("");
 		//set datepicker values
@@ -69,8 +68,12 @@ public class AddEventPopupController {
 		//fields for event object
 		String title = titleTextField.getText();
 		String description = descriptionTextArea.getText();
-		LocalDateTime startDateTime = LocalDateTime.of(startDatePicker.getValue(), startTimeComboBox.getValue());
-		LocalDateTime endDateTime = LocalDateTime.of(endDatePicker.getValue(), endTimeComboBox.getValue());
+		//time variables
+		LocalTime startTime = LocalTime.MIDNIGHT.plusMinutes(startTimeComboBox.getSelectionModel().getSelectedIndex() * TIME_INCREMENT);
+		LocalTime endTime = LocalTime.MIDNIGHT.plusMinutes(endTimeComboBox.getSelectionModel().getSelectedIndex() * TIME_INCREMENT);
+		
+		LocalDateTime startDateTime = LocalDateTime.of(startDatePicker.getValue(), startTime);
+		LocalDateTime endDateTime = LocalDateTime.of(endDatePicker.getValue(), endTime);
 		Color color = backgroundColorPicker.getValue();
 		//check if title is empty
 		if (title.isEmpty() || title == null) {
@@ -87,7 +90,6 @@ public class AddEventPopupController {
 		//check where to place event and do no insert if it collides with other event(s)
 		if (events.size() == 0) {//easy case: insert in empty list
 			events.add(newEvent);
-			cmodel.printEvents();
 			primaryStage.close();
 			return;
 		}
@@ -96,12 +98,10 @@ public class AddEventPopupController {
 		while(!newEvent.isDuring(currentEvent) && i<events.size()) {
 			if (newEvent.endsBy(currentEvent)) {
 				events.add(i,newEvent);
-				cmodel.printEvents();//debugging
 				primaryStage.close();
 				return;
 			}else if (i == events.size()-1 && newEvent.startsBy(currentEvent)) {//after last event
 				events.add(newEvent);		
-				cmodel.printEvents();//debugging
 				primaryStage.close();
 				return;
 			}

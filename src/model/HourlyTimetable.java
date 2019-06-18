@@ -58,8 +58,8 @@ public abstract class HourlyTimetable extends Timetable {
 				String defaultStyle = "-fx-background-color: white; -fx-border-color: black black black black;";
 				if (i==0) {//column for time labels. each label is 1 col x 2 rows 
 					if (j%12==0){//show only top border otherwise
-						String period = (j/12)<12 ? "am" : "pm";
-						int hour = ((j/12)%12==0) ? 12 : (j/12)%12;//converts hour from military to 12-hour time
+						String period = TimeUtilities.getPeriod(j/12);
+						int hour = TimeUtilities.militaryToTwelveHour(j/12);//converts hour from military to 12-hour time
 						Label hourLabel = new Label(" " + hour + period);
 						hourLabel.setMinHeight(rowSize*2);
 						hourLabel.setMinWidth(colSize);

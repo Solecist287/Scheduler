@@ -34,7 +34,6 @@ public class MonthTimetable extends Timetable {
 	ScrollPane monthGridContainer;
 	GridPane monthGrid, dayOfWeekHeader;
 	
-	
 	public MonthTimetable(Stage mainStage, List<Event> events, LocalDate initDate, Locale locale) {
 		super(mainStage, events, initDate, locale);
 		//set timetable dimensions
@@ -138,7 +137,6 @@ public class MonthTimetable extends Timetable {
 									viewEventPopup(item);
 									updateSelected(false);
 								});
-								
 							}
 						}
 					};
@@ -203,7 +201,6 @@ public class MonthTimetable extends Timetable {
 		if (isRenderable(e, lastDateEntered)) {
 			for (int i = 0; i < eventLists.size(); i++) {
 				eventLists.get(i).getItems().remove(e);
-				//eventLists.get(i).getSelectionModel().
         	}
 		}
 	}
@@ -255,10 +252,23 @@ public class MonthTimetable extends Timetable {
 		int index = (int)startOfTimeframe.until(startDate, ChronoUnit.DAYS);
 		int bound = index + daySpan;
 		//System.out.println("upper end bound is " + end);
-		//make timeslot slices of event for each day that the event spans
 		do {	
 			//System.out.println("iteration");
-			eventLists.get(index).getItems().add(e);
+			ListView<Event> currentListView = eventLists.get(index);
+			List<Event> currentList = currentListView.getItems();
+			for (int i = 0; i < currentList.size(); i++) {
+				Event currentEvent = currentList.get(i);
+				if (e.endsBy(currentEvent)) {
+					currentList.add(i, e);
+					break;
+				}else if (i == currentList.size()-1) {
+					currentList.add(e);
+					break;
+				}
+			}
+			if (currentList.size() == 0) {
+				currentList.add(e);
+			}
 			index++;
 		}while(index <= bound);
 	}

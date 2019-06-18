@@ -17,6 +17,7 @@ import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import model.Event;
+import model.TimeUtilities;
 import model.Timetable;
 
 public class ViewEventPopupController {
@@ -39,7 +40,7 @@ public class ViewEventPopupController {
 		Text descriptionText = new Text(e.getDescription() + "\n");
 		descriptionText.setStyle("-fx-font-size: 12;");
 		//here we goooo
-		Text timeframeText = new Text(getTimeframeText());
+		Text timeframeText = new Text(TimeUtilities.formatDateTimeRange(e.getStartDateTime(), e.getEndDateTime()));
 		timeframeText.setStyle("-fx-font-size: 12;");
 		
 		//add all text bois to textflow
@@ -47,37 +48,6 @@ public class ViewEventPopupController {
 		eventInfo.setPrefHeight(Timetable.WIDTH/4);
 		eventInfo.getChildren().addAll(titleText,descriptionText,timeframeText);
 	}
-	//remove previous event, add new one with modified fields
-	private String getTimeframeText() {
-		LocalDateTime startDateTime = e.getStartDateTime();
-		LocalDate startDate = startDateTime.toLocalDate();
-		LocalTime startTime = startDateTime.toLocalTime();
-		LocalDateTime endDateTime = e.getEndDateTime();
-		LocalDate endDate = endDateTime.toLocalDate();
-		LocalTime endTime = endDateTime.toLocalTime();
-		if (startDate.equals(endDate)) {//same day
-			String dayOfWeek = startDate.getDayOfWeek().toString().toLowerCase();
-			return dayOfWeek.substring(0,1).toUpperCase() + dayOfWeek.substring(1) 
-					+ ", " + startDate + " " + formatTime(startTime) + "-" + formatTime(endTime);
-		}else {//different days
-			return startDate + ", " + formatTime(startTime) + "-" + endDate + ", " + formatTime(endTime);
-		}
-	}
-	private String getPeriod(int militaryHour) {
-		return militaryHour<12 ? "am" : "pm";
-	}
-	private int militaryToTwelveHour(int militaryHour) {
-		return (militaryHour%12==0) ? 12 : militaryHour%12;//converts hour from military to 12-hour time
-	}
-	//time => hour:min am/pm
-	private String formatTime(LocalTime t) {
-		int militaryHour = t.getHour();
-		int hour = militaryToTwelveHour(militaryHour);
-		String period = getPeriod(militaryHour);
-		String originalTime = t.toString();
-		return hour + originalTime.substring(2) + period;
-	}
-	
 	public void modifyEvent() {
 		//create popup stage
 		Stage popupStage = new Stage();

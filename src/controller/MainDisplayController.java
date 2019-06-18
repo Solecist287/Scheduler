@@ -1,6 +1,5 @@
 package controller;
 
-import javafx.scene.control.ScrollPane;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.temporal.TemporalField;
@@ -142,7 +141,7 @@ public class MainDisplayController {
 		GridPane root = (GridPane)loader.load();
 		//retrieve and start up controller
 		AddEventPopupController addEventPopupController = loader.getController();
-		addEventPopupController.start(popupStage, cmodel, events, datePicker.getValue());
+		addEventPopupController.start(popupStage, events, datePicker.getValue());
 		//set up stage
 		popupStage.initModality(Modality.APPLICATION_MODAL);
 		popupStage.initOwner(primaryStage);
