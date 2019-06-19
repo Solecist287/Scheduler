@@ -149,8 +149,17 @@ public class YearTimetable extends Timetable {
 
 	@Override
 	public void renderEventViews(LocalDate d) {
-		// TODO Auto-generated method stub
-		
+		LocalDate endOfTimeframe = d.withMonth(12).withDayOfMonth(1).plusDays(MONTH_NUM_DAYS-1);
+		for (int i = 0; i < events.size(); i++) {
+			Event e = events.get(i);
+			//stop searching once past the end of the week
+			if (e.getStartDateTime().toLocalDate().isAfter(endOfTimeframe)) {
+				break;//stop searching
+			//add timeslot if falls in the current week or intersects week
+			}else if (isRenderable(e,d)) {
+				addViews(e, d);
+			}
+		}
 	}
 
 	@Override
@@ -158,7 +167,7 @@ public class YearTimetable extends Timetable {
 		LocalDateTime start = e.getStartDateTime();
 		LocalDateTime end = e.getEndDateTime();
 		LocalDate beforeTimeframe = d.withMonth(1).withDayOfMonth(1).with(dayOfWeekTemporalField,1).minusDays(1);
-		LocalDate afterTimeframe = d.withMonth(12).withDayOfMonth(1).plusDays(MONTH_NUM_DAYS-1);
+		LocalDate afterTimeframe = d.withMonth(12).withDayOfMonth(1).plusDays(MONTH_NUM_DAYS);
 		System.out.println("renderable: " + (start.toLocalDate().isBefore(afterTimeframe) && end.toLocalDate().isAfter(beforeTimeframe)
 				&& !end.equals(LocalDateTime.of(beforeTimeframe.plusDays(1), LocalTime.MIDNIGHT))));
 		return start.toLocalDate().isBefore(afterTimeframe) && end.toLocalDate().isAfter(beforeTimeframe)
