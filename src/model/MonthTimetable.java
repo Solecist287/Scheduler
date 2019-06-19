@@ -80,9 +80,9 @@ public class MonthTimetable extends Timetable {
 		//draw tiles
 		for (int j = 0; j < rowNum; j++) {
 			for (int i = 0; i < colNum; i++) {
-				VBox container = new VBox();//will not be used for first column since we use hour labels
-				container.setPrefWidth(colSize);
-				container.setPrefHeight(rowSize);
+				VBox tile = new VBox();//will not be used for first column since we use hour labels
+				tile.setPrefWidth(colSize);
+				tile.setPrefHeight(rowSize);
 				String style = "-fx-background-color: white; -fx-border-color: black black black black;";
 				if (j == rowNum-1) {//last row
 					if (i == colNum-1) {
@@ -98,7 +98,7 @@ public class MonthTimetable extends Timetable {
 					}
 				}
 				//set style for container
-				container.setStyle(style);
+				tile.setStyle(style);
 				//create components for container
 				//label stuff
 				Label header = new Label();
@@ -142,10 +142,10 @@ public class MonthTimetable extends Timetable {
 				//add to list
 				dayHeaderLabels.add(header);
 				eventLists.add(lv);
-				//add components to container
-				container.getChildren().addAll(header,lv);
+				//add components to tile
+				tile.getChildren().addAll(header,lv);
 				//add to grid
-				monthGrid.add(container, i, j);
+				monthGrid.add(tile, i, j);
 			}
 		}
 	}

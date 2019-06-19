@@ -66,7 +66,7 @@ public class DayTimetable extends HourlyTimetable {
 				? LocalDateTime.of(d, LocalTime.MIDNIGHT) : e.getStartDateTime();
 		LocalDateTime timeslotEnd = (e.getEndDateTime().toLocalDate().isAfter(d)) 
 				? LocalDateTime.of(d.plusDays(1), LocalTime.MIDNIGHT) : e.getEndDateTime();
-		System.out.println("timeslot");
+		//System.out.println("timeslot");
 		Timeslot t = new Timeslot(e, timeslotStart, timeslotEnd);
 		timeslots.add(t);
 		Node view = t.getView();

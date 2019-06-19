@@ -74,7 +74,7 @@ public class WeekTimetable extends HourlyTimetable {
 				? LocalDateTime.of(startOfWeek, LocalTime.MIDNIGHT) : e.getStartDateTime();
 		LocalDateTime end = (e.getEndDateTime().toLocalDate().isAfter(endOfWeek)) 
 				? LocalDateTime.of(endOfWeek.plusDays(1), LocalTime.MIDNIGHT) : e.getEndDateTime();//upper bound
-		System.out.println("upper end bound is " + end);
+		//System.out.println("upper end bound is " + end);
 		//make timeslot slices of event for each day that the event spans
 		do {	
 			//System.out.println("iteration");

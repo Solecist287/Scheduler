@@ -57,7 +57,7 @@ public class TimeUtilities {
 		//don't specifiy startperiod if it is the same as the end period i.e. 1-2pm
 		String startPeriod = getPeriod(start).equals(endPeriod) ? "" : getPeriod(start);
 		//return output
-		return startHour + startMinutes + startPeriod + " - " + endHour + endMinutes + endPeriod;
+		return startHour + startMinutes + startPeriod + "-" + endHour + endMinutes + endPeriod;
 	}
 	//same date: Monday, date, time - time
 	//different date: date, time - date, time
@@ -72,7 +72,7 @@ public class TimeUtilities {
 			return dayOfWeekCapitalized + ", " + formatDate(startDate) + ", "
 				+ formatTimeRange(startTime, endTime);
 		}else {
-			return formatDate(startDate) + ", " + formatTime(startTime) + " - " + formatDate(endDate) + ", " + formatTime(endTime);
+			return formatDate(startDate) + ", " + formatTime(startTime) + "-" + formatDate(endDate) + ", " + formatTime(endTime);
 		}
 	}
 	

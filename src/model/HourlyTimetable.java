@@ -57,9 +57,9 @@ public abstract class HourlyTimetable extends Timetable {
 		//draw tiles
 		for (int i = 0; i < colNum; i++) {
 			for (int j = 0; j < rowNum; j++) {
-				Pane p = new Pane();//will not be used for first column since we use hour labels
-				p.setPrefWidth(colSize);
-				p.setPrefHeight(rowSize);
+				Pane tile = new Pane();//will not be used for first column since we use hour labels
+				tile.setPrefWidth(colSize);
+				tile.setPrefHeight(rowSize);
 				String defaultStyle = "-fx-background-color: white; -fx-border-color: black black black black;";
 				if (i==0) {//column for time labels. each label is 1 col x 2 rows 
 					if (j%12==0){//show only top border otherwise
@@ -73,33 +73,33 @@ public abstract class HourlyTimetable extends Timetable {
 						j+=2;
 					}else {//draw bottom line and left of other cells 
 						if (j == rowNum-1) {//bottom
-							p.setStyle(defaultStyle + "-fx-border-width: 0 0 1 1;");
+							tile.setStyle(defaultStyle + "-fx-border-width: 0 0 1 1;");
 						}else {//rest
-							p.setStyle(defaultStyle + "-fx-border-width: 0 0 0 1;");
+							tile.setStyle(defaultStyle + "-fx-border-width: 0 0 0 1;");
 						}
-						hourlyGrid.add(p, i, j);
+						hourlyGrid.add(tile, i, j);
 					}
 				}else if (j%12==0) {//start of hour, show only top of cell
 					if (i==colNum-1) {
-						p.setStyle(defaultStyle + "-fx-border-width: 1 1 0 1;");
+						tile.setStyle(defaultStyle + "-fx-border-width: 1 1 0 1;");
 					}else {
-						p.setStyle(defaultStyle + "-fx-border-width: 1 0 0 1;");
+						tile.setStyle(defaultStyle + "-fx-border-width: 1 0 0 1;");
 					}
-					hourlyGrid.add(p, i, j);
+					hourlyGrid.add(tile, i, j);
 				}else if (j == rowNum - 1){//last row of cell
 					if (i==colNum-1) {
-						p.setStyle(defaultStyle + "-fx-border-width: 0 1 1 1;");
+						tile.setStyle(defaultStyle + "-fx-border-width: 0 1 1 1;");
 					}else {
-						p.setStyle(defaultStyle + "-fx-border-width: 0 0 1 1;");
+						tile.setStyle(defaultStyle + "-fx-border-width: 0 0 1 1;");
 					}
-					hourlyGrid.add(p, i, j);
+					hourlyGrid.add(tile, i, j);
 				}else {//just draw left and right lines of cell
 					if (i==colNum-1) {
-						p.setStyle(defaultStyle + "-fx-border-width: 0 1 0 1;");
+						tile.setStyle(defaultStyle + "-fx-border-width: 0 1 0 1;");
 					}else {
-						p.setStyle(defaultStyle + "-fx-border-width: 0 0 0 1;");
+						tile.setStyle(defaultStyle + "-fx-border-width: 0 0 0 1;");
 					}
-					hourlyGrid.add(p, i, j);
+					hourlyGrid.add(tile, i, j);
 				}
 			}
 		}
