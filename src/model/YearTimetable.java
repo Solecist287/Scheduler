@@ -10,6 +10,7 @@ import java.util.Locale;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.GridPane;
@@ -26,7 +27,7 @@ public class YearTimetable extends Timetable {
 	static final int MONTH_PADDING = 14;
 	static final int CONTAINER_PADDING = 10;
 	static final int MONTH_NUM_DAYS = 42;
-	List<List<Label>> monthlyDayLabels;//each list corresponds to a month
+	List<List<Button>> monthlyDayButtons;//each list corresponds to a month
 	
 	public YearTimetable(Stage mainStage, List<Event> events, LocalDate initDate, Locale locale) {
 		super(mainStage, events, initDate, locale);
@@ -36,7 +37,7 @@ public class YearTimetable extends Timetable {
 		colSize = (WIDTH - MONTH_PADDING * (colNum + 1))/colNum;
 		rowSize = colSize;
 		//create lists
-		monthlyDayLabels = new ArrayList<List<Label>>();
+		monthlyDayButtons = new ArrayList<List<Button>>();
 		//create view
 		createView();
 		updateHeaderLabels(initDate);
@@ -63,11 +64,10 @@ public class YearTimetable extends Timetable {
 				monthNameHeader.setStyle("-fx-background-color: white;");
 				
 				int monthGridCellLength = colSize/7;
-				List<Label> monthDayLabels = new ArrayList<Label>();
+				List<Button> monthDayButtons = new ArrayList<Button>();
 				GridPane monthGrid = new GridPane();
 				for (int k = 0; k < MONTH_ROW_NUM; k++) {
 					for (int l = 0; l < MONTH_COL_NUM; l++) {
-						Label dayLabel = new Label();
 						//set style and other parameters for label
 						String style = "-fx-background-color: white; -fx-border-color: black black black black;";
 						if (k == MONTH_ROW_NUM-1) {//last row
@@ -83,21 +83,32 @@ public class YearTimetable extends Timetable {
 								style += "-fx-border-width: 1 0 0 1;";
 							}
 						}
-						dayLabel.setStyle(style);
-						dayLabel.setAlignment(Pos.CENTER);
-						dayLabel.setPrefSize(monthGridCellLength, monthGridCellLength);
+						//add nodes to correct positions in monthgrid
 						if (k == 0) {//if first row, set days of week symbols
+							Label dayLabel = new Label();
 							dayLabel.setText(lastDateEntered.with(dayOfWeekTemporalField,l+1)
 									.getDayOfWeek().toString()
 									.substring(0,1));
+							dayLabel.setStyle(style);
+							dayLabel.setAlignment(Pos.CENTER);
+							dayLabel.setPrefSize(monthGridCellLength, monthGridCellLength);
+							//add to grid
+							monthGrid.add(dayLabel, l, k);
 						}else {
 							//set on click listener based on offset and lastdatentered
-							monthDayLabels.add(dayLabel);
+							Button dayButton = new Button();
+							dayButton.setOnAction(e->System.out.println("click!"));
+							dayButton.setStyle(style);
+							dayButton.setAlignment(Pos.CENTER);
+							dayButton.setPrefSize(monthGridCellLength, monthGridCellLength);
+							//add to buttons
+							monthDayButtons.add(dayButton);
+							//add to grid
+							monthGrid.add(dayButton, l, k);
 						}
-						monthGrid.add(dayLabel, l, k);
 					}
 				}
-				monthlyDayLabels.add(monthDayLabels);
+				monthlyDayButtons.add(monthDayButtons);
 				//add header and monthgrid to container
 				VBox container = new VBox();//will not be used for first column since we use hour labels
 				container.getChildren().addAll(monthNameHeader, monthGrid);
@@ -186,13 +197,13 @@ public class YearTimetable extends Timetable {
 	}
 	
 	private void updateHeaderLabels(LocalDate d) {
-		for (int i = 0; i < monthlyDayLabels.size(); i++) {//for each month...
+		for (int i = 0; i < monthlyDayButtons.size(); i++) {//for each month...
 			LocalDate date = d.withMonth(i+1).withDayOfMonth(1).with(dayOfWeekTemporalField,1);//first date of first week of month
-			List<Label> monthDayLabels = monthlyDayLabels.get(i);
-			for (int j = 0; j < monthDayLabels.size(); j++) {//for each day of the current month...
+			List<Button> monthDayButtons = monthlyDayButtons.get(i);
+			for (int j = 0; j < monthDayButtons.size(); j++) {//for each day of the current month...
 				int dayOfMonth = date.getDayOfMonth();
-				Label currentLabel = monthDayLabels.get(j);
-				currentLabel.setText(dayOfMonth + "");
+				Button currentButton = monthDayButtons.get(j);
+				currentButton.setText(dayOfMonth + "");
 				date = date.plusDays(1);
 			}
 		}
