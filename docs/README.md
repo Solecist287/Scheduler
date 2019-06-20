@@ -1,13 +1,19 @@
 # Scheduler
-Desktop application where the user can schedule events and view them in timetables.
-## Installation
+Desktop application where the user can schedule events and view them dynamically in timetables.
+## Accessing the Code
 Clone this repository and import it into Eclipse.
 ```
 https://github.com/Solecist287/Scheduler.git
 ```
+## Installation
+* Make sure you have `JRE 10.0.0`
+* Download the jar file from the `releases` directory
+* Place jar in a directory of your choice along with a directory called `data` (for saving progress)
+
 ## Tools Used
 * JavaFX
 * Eclipse
+
 ## Features And How To Use Them
 * Add events
   * Click "+ Event" button, fill out the form, and save it
