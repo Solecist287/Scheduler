@@ -124,7 +124,6 @@ public class MainDisplayController {
 		//initialize timeunitcombobox to time unit "Day" (triggers its listener to init stuff)
 		timeUnitComboBox.getSelectionModel().select(0);
 	}
-	public void stop() {}
 	//observable list would handle updating the timetable current view
 	@FXML
 	public void addEventPopup() throws IOException {

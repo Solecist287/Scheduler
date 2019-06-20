@@ -74,7 +74,7 @@ public class ModifyEventPopupController {
 	}
 	@FXML
 	public void saveEvent() {
-		System.out.println("save");
+		//System.out.println("save");
 		//fields for event object
 		String title = titleTextField.getText();
 		String description = descriptionTextArea.getText();
@@ -125,7 +125,7 @@ public class ModifyEventPopupController {
 	
 	@FXML
 	public void deleteEvent() {
-		System.out.println("delete");
+		//System.out.println("delete");
 		events.remove(selectedEvent);
 		primaryStage.close();
 	}

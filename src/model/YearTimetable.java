@@ -135,7 +135,7 @@ public class YearTimetable extends Timetable {
 	@Override
 	public void onEventAdded(Event e) {
 		if (isRenderable(e, lastDateEntered)) {
-			System.out.println("rendering");
+			//System.out.println("rendering");
 			addViews(e, lastDateEntered);
 		}
 	}
@@ -199,7 +199,7 @@ public class YearTimetable extends Timetable {
 		for (int i = 0; i < dayslots.size(); i++) {
 			Dayslot dayslot = dayslots.get(i);
 			if (isRenderableForDayslot(e,dayslot.getDate(d))) {
-				System.out.println("called");
+				//System.out.println("called");
 				dayslot.addEvent(e);
 			}
 		}
@@ -303,14 +303,14 @@ public class YearTimetable extends Timetable {
 			dayButton.setOnAction(e->{
 				//retrieve date clicked
 				LocalDate d = getDate(lastDateEntered);
-				System.out.println("clicked: " + d.toString());
+				//System.out.println("clicked: " + d.toString());
 				viewDayEventsPopup(d);
 				
 			});
 			dayEvents = new ArrayList<Event>();
 		}
 		public void addEvent(Event e) {
-			System.out.println("added event!");
+			//System.out.println("added event!");
 			dayEvents.add(e);
 			updateStyle();
 		}
@@ -336,7 +336,7 @@ public class YearTimetable extends Timetable {
 			r = r/dayEvents.size();
 			g = g/dayEvents.size();
 			b = b/dayEvents.size();
-			System.out.println("r: " + r*255 + ", g: " + g*255 + ", b: " + b*255);
+			//System.out.println("r: " + r*255 + ", g: " + g*255 + ", b: " + b*255);
 			dayButton.setStyle(boldStyle 
 					+ "-fx-background-color: rgb(" + r*255 + "," + g*255 + "," + b*255 + ");");
 		}
