@@ -14,12 +14,6 @@
 
 <?import javafx.geometry.Insets?>
 
-<?import java.lang.*?>
-<?import java.net.*?>
-<?import java.util.*?>
-<?import javafx.collections.*?>
-<?import javafx.scene.paint.*?>
-
 <GridPane
 	xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="controller.ViewEventPopupController"

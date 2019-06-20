@@ -67,20 +67,19 @@ public class MainDisplayController {
                 		dayTimetable.onEventAdded(e);
                 		weekTimetable.onEventAdded(e);
                 		monthTimetable.onEventAdded(e);
-                		//yearTimetable.onEventAdded(e);
+                		yearTimetable.onEventAdded(e);
                 	}
                 } else if (change.wasRemoved()) {
                     for (Event e : change.getRemoved()) {
                     	dayTimetable.onEventRemoved(e);
                     	weekTimetable.onEventRemoved(e);
                     	monthTimetable.onEventRemoved(e);
-                    	//yearTimetable.removeEvent(e);
+                    	yearTimetable.onEventRemoved(e);
                     }
                 }
             }
         });
 		//timetableDisplay width
-		//timetableDisplay.setMinWidth(Timetable.WIDTH + PADDING);//later use getters of current grid
 		//default locale
 		localeSetting = Locale.US;
 		//set temporal field in order to know "beginning" of week like sunday,monday,etc.

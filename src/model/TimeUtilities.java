@@ -20,7 +20,7 @@ public class TimeUtilities {
 		return militaryToTwelveHour(t.getHour());
 	}
 	public static String formatDate(LocalDate d) {
-		return d.getMonthValue() + "-" + d.getDayOfMonth() + " - " + d.getYear();
+		return d.getMonthValue() + "-" + d.getDayOfMonth() + "-" + d.getYear();
 	}
 	//time => 12:00am
 	public static String formatComboBoxTime(LocalTime t) {

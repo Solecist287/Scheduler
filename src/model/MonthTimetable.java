@@ -174,7 +174,7 @@ public class MonthTimetable extends Timetable {
 		if (!d.getMonth().equals(lastDateEntered.getMonth()) || d.getYear()!=lastDateEntered.getYear()) {
 			//update day labels
 			updateHeaderLabels(d);
-			//clear timeslots from list and hourlygrid
+			//clear items from listviews
 			clearAllEventViews();
 			//render events
 			renderEventViews(d);
