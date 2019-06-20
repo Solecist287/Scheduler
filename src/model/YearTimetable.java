@@ -231,7 +231,8 @@ public class YearTimetable extends Timetable {
 		int height = Timetable.WIDTH/4;
 		//create popup stage
 		Stage popupStage = new Stage();
-		Label header = new Label(d.toString());
+		Label header = new Label(TimeUtilities.formatDate(d));
+		header.setStyle("-fx-background-color: white;");
 		ListView<Event> dayEventsListView = new ListView<Event>();
 		dayEventsListView.setCellFactory(x -> {
 			return new ListCell<Event>() {
@@ -272,9 +273,12 @@ public class YearTimetable extends Timetable {
 			}
 		}
 		//create container for header and listview
-		VBox popupContent = new VBox(header, dayEventsListView);
+		VBox popupContent = new VBox(10);
+		popupContent.getChildren().addAll(header, dayEventsListView);
 		popupContent.setPrefWidth(width);
 		popupContent.setPrefHeight(height);
+		popupContent.setAlignment(Pos.CENTER);
+		popupContent.setStyle("-fx-background-color: white;");
 		//set up stage
 		popupStage.initModality(Modality.APPLICATION_MODAL);
 		popupStage.initOwner(mainStage);
