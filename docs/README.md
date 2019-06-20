@@ -27,7 +27,7 @@ https://github.com/Solecist287/Scheduler.git
 * Click to view event info
   * Click existing event
 * View events in day, week, month, and year timetables
-  * Choose "day", "week", "month", or "year" from the dropdown box (month and year not yet implemented)
+  * Choose "day", "week", "month", or "year" from the dropdown box
 * Traverse a calendar or other shortcut buttons to view events
   * For the calendar, use the arrows and boxes to find the desired date
   * Can click today button to direct user to events on that current day
