@@ -223,8 +223,6 @@ public class YearTimetable extends Timetable {
 		Stage popupStage = new Stage();
 		Label header = new Label(TimeUtilities.formatDate(d));
 		header.setStyle("-fx-background-color: white;");
-		//set events that intersect with date
-		ObservableList<Event> dayEventsList = FXCollections.observableArrayList(dayEvents);
 		//create container for header and listview
 		VBox popupContent = new VBox(10);
 		popupContent.setPadding(new Insets(10,10,10,10));
@@ -233,6 +231,8 @@ public class YearTimetable extends Timetable {
 		popupContent.setStyle("-fx-background-color: white;");
 		//create and add listview to container if there's any items in list
 		if (dayEvents.size()>0) {
+			//create observable list for listview
+			ObservableList<Event> dayEventsList = FXCollections.observableArrayList(dayEvents);
 			//create/set up listview and add it to container
 			ListView<Event> dayEventsListView = new ListView<Event>();
 			dayEventsListView.setPrefWidth(width);
