@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
@@ -221,54 +223,67 @@ public class YearTimetable extends Timetable {
 		Stage popupStage = new Stage();
 		Label header = new Label(TimeUtilities.formatDate(d));
 		header.setStyle("-fx-background-color: white;");
-		ListView<Event> dayEventsListView = new ListView<Event>();
-		dayEventsListView.setPrefWidth(width);
-		dayEventsListView.setPrefHeight(height);
-		dayEventsListView.setCellFactory(x -> {
-			return new ListCell<Event>() {
-				@Override
-				protected void updateItem(Event item, boolean empty) {
-					super.updateItem(item,empty);
-					if (item == null) {
-		                setGraphic(null);
-		                setText(null);
-		                setStyle(null);
-		                setOnMouseClicked(null);
-		                updateSelected(false);
-					}else {
-						Color c = item.getBackgroundColor();
-						String formattedTime = TimeUtilities.formatTime(item.getStartDateTime().toLocalTime());
-						String text = item.getTitle() + " " + formattedTime;
-						setGraphic(null);
-						setText(text);
-						setPrefWidth(width - PADDING);
-						setStyle("-fx-background-color: rgb(" + c.getRed()*255 + "," + c.getGreen()*255 + "," + c.getBlue()*255 + ");"
-								+ "-fx-border-color: black;" + "-fx-font-size: 12");
-						setOnMouseClicked(event -> {
-							viewEventPopup(item);
-							updateSelected(false);
-							popupStage.close();
-						});
-						updateSelected(false);
-					}
-				}
-			};
-		});
-		dayEventsListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
-		
 		//set events that intersect with date
+		ObservableList<Event> dayEventsList = FXCollections.observableArrayList();
 		for (int i = 0; i < events.size(); i++) {
 			Event e = events.get(i);
 			if (isRenderableForDayslot(e,d)) {
-				dayEventsListView.getItems().add(e);
+				dayEventsList.add(e);
 			}
 		}
 		//create container for header and listview
 		VBox popupContent = new VBox(10);
 		popupContent.setPadding(new Insets(10,10,10,10));
-		popupContent.getChildren().addAll(header, dayEventsListView);
+		popupContent.getChildren().addAll(header);
 		popupContent.setAlignment(Pos.CENTER);
 		popupContent.setStyle("-fx-background-color: white;");
+		//create and add listview to container if there's any items in list
+		if (dayEventsList.size()>0) {
+			ListView<Event> dayEventsListView = new ListView<Event>();
+			dayEventsListView.setPrefWidth(width);
+			dayEventsListView.setPrefHeight(height);
+			dayEventsListView.setCellFactory(x -> {
+				return new ListCell<Event>() {
+					@Override
+					protected void updateItem(Event item, boolean empty) {
+						super.updateItem(item,empty);
+						if (item == null) {
+			                setGraphic(null);
+			                setText(null);
+			                setStyle(null);
+			                setOnMouseClicked(null);
+			                updateSelected(false);
+						}else {
+							Color c = item.getBackgroundColor();
+							String formattedTime = TimeUtilities.formatTime(item.getStartDateTime().toLocalTime());
+							String text = item.getTitle() + " " + formattedTime;
+							setGraphic(null);
+							setText(text);
+							setPrefWidth(width - PADDING);
+							setStyle("-fx-background-color: rgb(" + c.getRed()*255 + "," + c.getGreen()*255 + "," + c.getBlue()*255 + ");"
+									+ "-fx-border-color: black;" + "-fx-font-size: 12");
+							setOnMouseClicked(event -> {
+								viewEventPopup(item);
+								updateSelected(false);
+								popupStage.close();
+							});
+							updateSelected(false);
+						}
+					}
+				};
+			});
+			dayEventsListView.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
+			dayEventsListView.setItems(dayEventsList);
+			//add to container
+			popupContent.getChildren().add(dayEventsListView);
+		}else {
+			Label message = new Label("No events on this day");
+			message.setPrefWidth(width);
+			message.setPrefHeight(height);
+			message.setAlignment(Pos.CENTER);
+			//add to container
+			popupContent.getChildren().add(message);
+		}
 		//set up stage
 		popupStage.initModality(Modality.APPLICATION_MODAL);
 		popupStage.initOwner(mainStage);
