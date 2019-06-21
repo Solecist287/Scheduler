@@ -34,7 +34,6 @@ public abstract class Timetable {
 		this.locale = locale;
 		//set temporal field in order to know "beginning" of week like sunday,monday,etc.
 		dayOfWeekTemporalField = WeekFields.of(locale).dayOfWeek();
-		
 		view = null;
 	}
 	public Node getView() {
@@ -42,18 +41,18 @@ public abstract class Timetable {
 	}
 	//view that represents entire timetable object
 	public abstract void createView();
-	//reconstructs timeslots if lastdateentered and currentdate not in same time unit
+	//reconstructs visuals only if input date and lastdateentered are in different timeframes...not dynamic once in focus
 	public abstract void update(LocalDate d);
-	//adds nodes for an event if event is in same timeunit
+	//adds nodes for an event if event is in same timeunit, dynamically changes timetable
 	public abstract void onEventAdded(Event e);
-	//removes nodes for an event if event is in same timeunit
+	//removes nodes for an event if event is in same timeunit, dynamically changes timetable
 	public abstract void onEventRemoved(Event e);
 	//should add nodes of an event to list, timetable container, and add listeners
-	public abstract void addViews(Event e, LocalDate d); 
+	public abstract void addVisuals(Event e, LocalDate d); 
 	//clears all event related nodes
-	public abstract void clearAllEventViews();
+	public abstract void clearAllEventVisuals();
 	//render all applicable event nodes (calls addNodes(e, date), if isRenderable(e,date)==true)
-	public abstract void renderEventViews(LocalDate d);
+	public abstract void renderEventVisuals(LocalDate d);
 	//called to see if event can be rendered to current state of view
 	public abstract boolean isRenderable(Event e, LocalDate d);
 	//called when event is clicked on

@@ -27,7 +27,7 @@ public class Scheduler extends Application{
 		//set up stage
 		primaryStage.setScene(new Scene(root));
 		primaryStage.setTitle("Scheduler");
-		primaryStage.setResizable(true);
+		primaryStage.setResizable(false);
 		primaryStage.centerOnScreen();
 		primaryStage.show();
 	}

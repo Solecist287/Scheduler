@@ -17,7 +17,7 @@ public class DayTimetable extends HourlyTimetable {
 		super(mainStage, events, initDate, 1, locale);
 		headerLabel = headerLabels.get(0);
 		updateHeaderLabel(initDate);
-		renderEventViews(initDate);
+		renderEventVisuals(initDate);
 	}
 
 	@Override
@@ -26,9 +26,9 @@ public class DayTimetable extends HourlyTimetable {
 			//update day label
 			updateHeaderLabel(d);
 			//clear timeslots from list and hourlygrid
-			clearAllEventViews();
+			clearAllEventVisuals();
 			//draw events that match date
-			renderEventViews(d);
+			renderEventVisuals(d);
 		}
 		lastDateEntered = d;
 	}
@@ -36,7 +36,7 @@ public class DayTimetable extends HourlyTimetable {
 	@Override
 	public void onEventAdded(Event e) {
 		if (isRenderable(e,lastDateEntered)) {
-			addViews(e, lastDateEntered);
+			addVisuals(e, lastDateEntered);
 		}
 	}
 
@@ -60,13 +60,12 @@ public class DayTimetable extends HourlyTimetable {
 	}
 
 	@Override
-	public void addViews(Event e, LocalDate d) {
+	public void addVisuals(Event e, LocalDate d) {
 		//make day slice of event for singular timeslot
 		LocalDateTime timeslotStart = (e.getStartDateTime().toLocalDate().isBefore(d))
 				? LocalDateTime.of(d, LocalTime.MIDNIGHT) : e.getStartDateTime();
 		LocalDateTime timeslotEnd = (e.getEndDateTime().toLocalDate().isAfter(d)) 
 				? LocalDateTime.of(d.plusDays(1), LocalTime.MIDNIGHT) : e.getEndDateTime();
-		//System.out.println("timeslot");
 		Timeslot t = new Timeslot(e, timeslotStart, timeslotEnd);
 		timeslots.add(t);
 		Node view = t.getView();
@@ -94,7 +93,7 @@ public class DayTimetable extends HourlyTimetable {
 	}
 
 	@Override
-	public void renderEventViews(LocalDate d) {
+	public void renderEventVisuals(LocalDate d) {
 		for (int i = 0; i < events.size(); i++) {
 			Event e = events.get(i);
 			//search linearly until after last day entered
@@ -102,7 +101,7 @@ public class DayTimetable extends HourlyTimetable {
 				break;//stop searching
 			//add events if it doesn't end before input date
 			}else if (isRenderable(e,d)) {
-				addViews(e, d);
+				addVisuals(e, d);
 			}
 		}
 	}

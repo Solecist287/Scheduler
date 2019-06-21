@@ -51,14 +51,13 @@ public class MainDisplayController {
 	private Stage primaryStage;
 	
 	private DatePicker datePicker;//underlying date selection logic
-	private Node datePickerSkinPopupContent;//display for date selection
 	
-	private TemporalField dayOfWeekTemporalField;//later be a general setting
+	private TemporalField dayOfWeekTemporalField;
 	private Locale localeSetting;
 	
 	public void start(Stage primaryStage, CalendarModel cmodel) {
 		this.primaryStage = primaryStage;
-		//retrieve events and set listener to update selectedtimetable
+		//retrieve events and set listener to update all timetables
 		events = cmodel.getEvents();
 		events.addListener((ListChangeListener<Event>) change -> {
             while (change.next()) {
@@ -79,7 +78,6 @@ public class MainDisplayController {
                 }
             }
         });
-		//timetableDisplay width
 		//default locale
 		localeSetting = Locale.US;
 		//set temporal field in order to know "beginning" of week like sunday,monday,etc.
@@ -92,13 +90,11 @@ public class MainDisplayController {
 		datePicker = new DatePicker(today);
 		datePicker.setShowWeekNumbers(false);
 		datePicker.valueProperty().addListener((selected,oldval,newval)->{
-			//System.out.println("datepicker listener called");
 			updateMonthYearLabel();
-			//update timetable
 			selectedTimetable.update(newval);
 		});
 		//extract visuals from datepicker
-		datePickerSkinPopupContent = new DatePickerSkin(datePicker).getPopupContent();
+		Node datePickerSkinPopupContent = new DatePickerSkin(datePicker).getPopupContent();
 		datePickerSkinPopupContent.setStyle("-fx-border-color: black;");
 		//add calendar display to left side of screen
 		calendarView.getChildren().add(0,datePickerSkinPopupContent);
@@ -111,7 +107,6 @@ public class MainDisplayController {
 		timeUnitComboBox.getItems().addAll(dayTimetable, weekTimetable, monthTimetable, yearTimetable);
 		//add listener to timeUnitComboBox
 		timeUnitComboBox.getSelectionModel().selectedItemProperty().addListener((selected,oldval,newval)->{
-			//System.out.println("timeUnitComboBox listener called");
 			//add hover text for left and right arrow buttons
 			leftButton.setTooltip(new Tooltip("Previous " + newval));
 			rightButton.setTooltip(new Tooltip("Next " + newval));
@@ -154,7 +149,7 @@ public class MainDisplayController {
 	public void setToToday() {
 		//get today's date
 		LocalDate currentDate = LocalDate.now();
-		//change calendarview which changes label
+		//change datepicker value which changes label
 		datePicker.setValue(currentDate);
 		//after date is changed, update current timetable
 		selectedTimetable.update(getSelectedDate());

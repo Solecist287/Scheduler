@@ -15,10 +15,10 @@ public class Event implements Serializable{
 	//minimal constructor
 	public Event(String title, String description, LocalDateTime startDateTime, 
 			LocalDateTime endDateTime, Color backgroundColor) {
-		this.setTitle(title);
-		this.setDescription(description);
-		this.setStartDateTime(startDateTime);
-		this.setEndDateTime(endDateTime);
+		this.title = title;
+		this.description = description;
+		this.startDateTime = startDateTime;
+		this.endDateTime = endDateTime;
 		red = backgroundColor.getRed();
 		green = backgroundColor.getGreen();
 		blue = backgroundColor.getBlue();
@@ -42,32 +42,16 @@ public class Event implements Serializable{
 		return title;
 	}
 
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
 	public String getDescription() {
 		return description;
-	}
-
-	public void setDescription(String description) {
-		this.description = description;
 	}
 
 	public LocalDateTime getStartDateTime() {
 		return startDateTime;
 	}
 
-	public void setStartDateTime(LocalDateTime startDateTime) {
-		this.startDateTime = startDateTime;
-	}
-
 	public LocalDateTime getEndDateTime() {
 		return endDateTime;
-	}
-	
-	public void setEndDateTime(LocalDateTime endDateTime) {
-		this.endDateTime = endDateTime;
 	}
 
 	public Color getBackgroundColor() {

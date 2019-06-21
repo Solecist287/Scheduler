@@ -15,7 +15,7 @@ public class WeekTimetable extends HourlyTimetable {
 	public WeekTimetable(Stage mainStage, List<Event> events, LocalDate initDate, Locale locale) {
 		super(mainStage, events, initDate, 7, locale);
 		updateHeaderLabels(initDate);
-		renderEventViews(initDate);
+		renderEventVisuals(initDate);
 	}
 	
 	//cannot be static as long as temporalfield needs to be instantiated
@@ -33,9 +33,9 @@ public class WeekTimetable extends HourlyTimetable {
 			//update day labels
 			updateHeaderLabels(d);
 			//clear timeslots from list and hourlygrid
-			clearAllEventViews();
+			clearAllEventVisuals();
 			//render events
-			renderEventViews(d);
+			renderEventVisuals(d);
 		}
 		lastDateEntered = d;
 	}
@@ -43,7 +43,7 @@ public class WeekTimetable extends HourlyTimetable {
 	@Override
 	public void onEventAdded(Event e) {
 		if (isRenderable(e, lastDateEntered)) {
-			addViews(e, lastDateEntered);
+			addVisuals(e, lastDateEntered);
 		}
 	}
 
@@ -67,17 +67,15 @@ public class WeekTimetable extends HourlyTimetable {
 	}
 
 	@Override
-	public void addViews(Event e, LocalDate d) {
+	public void addVisuals(Event e, LocalDate d) {
 		LocalDate startOfWeek = d.with(dayOfWeekTemporalField,1);
 		LocalDate endOfWeek = d.with(dayOfWeekTemporalField,7);
 		LocalDateTime timeslotStart = (e.getStartDateTime().toLocalDate().isBefore(startOfWeek))
 				? LocalDateTime.of(startOfWeek, LocalTime.MIDNIGHT) : e.getStartDateTime();
 		LocalDateTime end = (e.getEndDateTime().toLocalDate().isAfter(endOfWeek)) 
 				? LocalDateTime.of(endOfWeek.plusDays(1), LocalTime.MIDNIGHT) : e.getEndDateTime();//upper bound
-		//System.out.println("upper end bound is " + end);
 		//make timeslot slices of event for each day that the event spans
 		do {	
-			//System.out.println("iteration");
 			int weekIndex = timeslotStart.get(dayOfWeekTemporalField);
 			LocalDateTime timeslotEnd = (end.toLocalDate().isAfter(timeslotStart.toLocalDate())) 
 					? timeslotStart.plusDays(1).with(LocalTime.MIDNIGHT) : end;
@@ -87,7 +85,6 @@ public class WeekTimetable extends HourlyTimetable {
 			view.setOnMouseClicked(event -> {
 				viewEventPopup(e);
 			});
-			//System.out.println("slice: start is " + timeslotStart + ", end is " + timeslotEnd);
 			hourlyGrid.add(view, weekIndex, t.getRow(), 1, t.getRowSpan());
 			timeslotStart = timeslotStart.plusDays(1).with(LocalTime.MIDNIGHT);
 		}while(timeslotStart.isBefore(end));
@@ -117,7 +114,7 @@ public class WeekTimetable extends HourlyTimetable {
 	}
 
 	@Override
-	public void renderEventViews(LocalDate d) {
+	public void renderEventVisuals(LocalDate d) {
 		LocalDate endOfWeek = d.with(dayOfWeekTemporalField,7);
 		for (int i = 0; i < events.size(); i++) {
 			Event e = events.get(i);
@@ -126,7 +123,7 @@ public class WeekTimetable extends HourlyTimetable {
 				break;//stop searching
 			//add timeslot if falls in the current week or intersects week
 			}else if (isRenderable(e,d)) {
-				addViews(e, d);
+				addVisuals(e, d);
 			}
 		}
 	}

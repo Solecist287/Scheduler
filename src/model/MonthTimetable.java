@@ -43,7 +43,7 @@ public class MonthTimetable extends Timetable {
 		//create view
 		createView();
 		updateHeaderLabels(initDate);
-		renderEventViews(initDate);
+		renderEventVisuals(initDate);
 	}
 
 	private void createHeaderGrid() {
@@ -170,14 +170,14 @@ public class MonthTimetable extends Timetable {
 
 	@Override
 	public void update(LocalDate d) {
-		//only do render new week if date is in another week than lastDateEntered
+		//only do render new month timeframe if date is in another month timeframe than lastDateEntered
 		if (!d.getMonth().equals(lastDateEntered.getMonth()) || d.getYear()!=lastDateEntered.getYear()) {
 			//update day labels
 			updateHeaderLabels(d);
 			//clear items from listviews
-			clearAllEventViews();
+			clearAllEventVisuals();
 			//render events
-			renderEventViews(d);
+			renderEventVisuals(d);
 		}
 		lastDateEntered = d;
 	}
@@ -190,7 +190,7 @@ public class MonthTimetable extends Timetable {
 	@Override
 	public void onEventAdded(Event e) {
 		if (isRenderable(e, lastDateEntered)) {
-			addViews(e, lastDateEntered);
+			addVisuals(e, lastDateEntered);
 		}
 	}
 	@Override
@@ -202,16 +202,16 @@ public class MonthTimetable extends Timetable {
 		}
 	}
 	@Override
-	public void renderEventViews(LocalDate d) {
+	public void renderEventVisuals(LocalDate d) {
 		LocalDate endOfTimeframe = d.withDayOfMonth(1).with(dayOfWeekTemporalField,1).plusDays(NUM_DAYS-1);
 		for (int i = 0; i < events.size(); i++) {
 			Event e = events.get(i);
-			//stop searching once past the end of the week
+			//stop searching once past the end of the month timeframe
 			if (e.getStartDateTime().toLocalDate().isAfter(endOfTimeframe)) {
 				break;//stop searching
-			//add timeslot if falls in the current week or intersects week
+			//add visuals if falls in the current month timeframe or intersects month timeframe
 			}else if (isRenderable(e,d)) {
-				addViews(e, d);
+				addVisuals(e, d);
 			}
 		}
 	}
@@ -227,14 +227,14 @@ public class MonthTimetable extends Timetable {
 	}
 
 	@Override
-	public void clearAllEventViews() {
+	public void clearAllEventVisuals() {
 		for (int i = 0; i < eventLists.size(); i++) {
 			eventLists.get(i).getItems().clear();
 		}
 	}
 
 	@Override
-	public void addViews(Event e, LocalDate d) {
+	public void addVisuals(Event e, LocalDate d) {
 		LocalDate startOfTimeframe = d.withDayOfMonth(1).with(dayOfWeekTemporalField,1);
 		LocalDate endOfTimeframe = startOfTimeframe.plusDays(NUM_DAYS-1);
 		LocalDate startDate = (e.getStartDateTime().toLocalDate().isBefore(startOfTimeframe))
@@ -248,9 +248,7 @@ public class MonthTimetable extends Timetable {
 		int daySpan = (int)startDate.until(endDate, ChronoUnit.DAYS);
 		int index = (int)startOfTimeframe.until(startDate, ChronoUnit.DAYS);
 		int bound = index + daySpan;
-		//System.out.println("upper end bound is " + end);
-		do {	
-			//System.out.println("iteration");
+		do {
 			ListView<Event> currentListView = eventLists.get(index);
 			List<Event> currentList = currentListView.getItems();
 			for (int i = 0; i < currentList.size(); i++) {

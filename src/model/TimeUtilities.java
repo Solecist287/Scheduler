@@ -7,8 +7,7 @@ import java.time.LocalTime;
 public class TimeUtilities {
 	// ex: 13 => 1
 	public static String getPeriod(LocalTime t) {
-		int militaryHour = t.getHour();
-		return militaryHour<12 ? "am" : "pm";
+		return t.getHour()<12 ? "am" : "pm";
 	}
 	public static String getPeriod(int militaryHour) {
 		return militaryHour<12 ? "am" : "pm";
