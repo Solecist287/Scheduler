@@ -216,7 +216,7 @@ public class YearTimetable extends Timetable {
 	}
 
 	//onclick handler for dayslots
-	public void viewDayEventsPopup(LocalDate d) {
+	public void viewDayEventsPopup(LocalDate d, List<Event> dayEvents) {
 		int width = Timetable.WIDTH/2;//should be half of timetable width?
 		int height = Timetable.WIDTH/4;
 		//create popup stage
@@ -224,13 +224,7 @@ public class YearTimetable extends Timetable {
 		Label header = new Label(TimeUtilities.formatDate(d));
 		header.setStyle("-fx-background-color: white;");
 		//set events that intersect with date
-		ObservableList<Event> dayEventsList = FXCollections.observableArrayList();
-		for (int i = 0; i < events.size(); i++) {
-			Event e = events.get(i);
-			if (isRenderableForDayslot(e,d)) {
-				dayEventsList.add(e);
-			}
-		}
+		ObservableList<Event> dayEventsList = FXCollections.observableArrayList(dayEvents);
 		//create container for header and listview
 		VBox popupContent = new VBox(10);
 		popupContent.setPadding(new Insets(10,10,10,10));
@@ -238,7 +232,8 @@ public class YearTimetable extends Timetable {
 		popupContent.setAlignment(Pos.CENTER);
 		popupContent.setStyle("-fx-background-color: white;");
 		//create and add listview to container if there's any items in list
-		if (dayEventsList.size()>0) {
+		if (dayEvents.size()>0) {
+			//create/set up listview and add it to container
 			ListView<Event> dayEventsListView = new ListView<Event>();
 			dayEventsListView.setPrefWidth(width);
 			dayEventsListView.setPrefHeight(height);
@@ -277,6 +272,7 @@ public class YearTimetable extends Timetable {
 			//add to container
 			popupContent.getChildren().add(dayEventsListView);
 		}else {
+			//no events, specify through message
 			Label message = new Label("No events on this day");
 			message.setPrefWidth(width);
 			message.setPrefHeight(height);
@@ -308,7 +304,7 @@ public class YearTimetable extends Timetable {
 			dayButton.setOnAction(e->{
 				//retrieve date clicked
 				LocalDate d = getDate(lastDateEntered);
-				viewDayEventsPopup(d);
+				viewDayEventsPopup(d, dayEvents);
 			});
 			dayEvents = new ArrayList<Event>();
 		}
