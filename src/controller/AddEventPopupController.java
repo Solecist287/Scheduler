@@ -35,7 +35,7 @@ public class AddEventPopupController {
 	
 	private List<Event> events;
 	private Stage primaryStage;
-	private int comboBoxWidth = 100;//specific, but perfectly fits time choices
+	private int comboBoxWidth = 150;//specific, but perfectly fits time choices
 	private final int TIME_INCREMENT = 5;
 	public void start(Stage primaryStage, List<Event> events, LocalDate initDate) {
 		this.primaryStage = primaryStage;
