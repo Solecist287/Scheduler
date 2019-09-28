@@ -31,8 +31,8 @@ public class YearTimetable extends Timetable {
 	static final int MONTH_ROW_NUM = 7;
 	static final int MONTH_COL_NUM = 7;
 	static final int MONTH_NUM = 12;
-	static final int MONTH_PADDING = 14;
-	static final int CONTAINER_PADDING = 10;
+	static final int MONTH_PADDING = 10;//padding between months
+	static final int CONTAINER_PADDING = 10;//pointless?
 	static final int MONTH_DAYS_NUM = 42;
 	static final int TOTAL_DAYS = MONTH_DAYS_NUM * MONTH_NUM;
 	List<Dayslot> dayslots;
@@ -42,6 +42,7 @@ public class YearTimetable extends Timetable {
 		rowNum = 4;
 		colNum = 3;
 		colSize = (WIDTH - MONTH_PADDING * (colNum + 1))/colNum;
+		System.out.println(colSize);
 		rowSize = colSize;
 		//create lists
 		dayslots = new ArrayList<Dayslot>();

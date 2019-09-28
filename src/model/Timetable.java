@@ -21,7 +21,7 @@ public abstract class Timetable {
 	Node view;
 	Locale locale;
 	TemporalField dayOfWeekTemporalField;
-	public static final int WIDTH = 728;//div by 4 and 7...ie 707,714,721,728,763,770,777,784
+	public static final int WIDTH = 840;//div by 4 and 7...ie 700, 728, 756, 784, 812, 840
 	public static final int HEIGHT = 500;//arbitrary
 	public static final int PADDING = 20;//for timetable display
 	int rowNum, rowSize, colNum, colSize;
