@@ -34,7 +34,7 @@ public class CalendarModel implements Serializable {
 			oos.writeObject(cmodel);
 			oos.close();
 		}catch(IOException e) {
-			System.err.println("write:error opening file");
+			System.out.println("write:error opening file");
 		}		
 	}
 	
