@@ -10,35 +10,40 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.text.*?>
 
+<?import javafx.scene.layout.ColumnConstraints?>
 <?import javafx.geometry.Insets?>
 
 <GridPane
 	xmlns:fx="http://javafx.com/fxml/1"
 	fx:controller="controller.ModifyEventPopupController"
-	vgap="10">
+	vgap="10" hgap="10">
 	
 	<padding>
 		<Insets top="10" right="10" bottom="10" left="10"/>
 	</padding>	
 	
+	<columnConstraints>
+    	<ColumnConstraints hgrow="NEVER"/>
+        <ColumnConstraints hgrow="NEVER"/>
+        <ColumnConstraints hgrow="NEVER"/>
+        <ColumnConstraints hgrow="NEVER"/>
+        <ColumnConstraints hgrow="NEVER"/>
+    </columnConstraints>
+	
 	<children>
-		<TextField GridPane.rowIndex="0" fx:id="titleTextField" promptText="Add Title"/>
-		<HBox GridPane.rowIndex="1" spacing="10">
-			<children>
-				<DatePicker fx:id="startDatePicker"/>
-				<ComboBox fx:id="startTimeComboBox"/>
-				<Text text="-">
-					<font>
-						<Font name="Times New Roman" size="24"/>
-					</font>
-				</Text>
-				<DatePicker fx:id="endDatePicker"/>
-				<ComboBox fx:id="endTimeComboBox"/>
-			</children>
-		</HBox>
-		<TextArea GridPane.rowIndex="2" fx:id="descriptionTextArea" promptText="Add Optional Description"/>
+		<TextField GridPane.rowIndex="0" GridPane.columnSpan="5" fx:id="titleTextField" promptText="Add Title"/>
+		<DatePicker GridPane.rowIndex="1" GridPane.columnIndex="0" fx:id="startDatePicker"/>
+		<ComboBox GridPane.rowIndex="1" GridPane.columnIndex="1" fx:id="startTimeComboBox" minWidth="150" maxWidth="1.7976931348623157E308"/>
+		<Text GridPane.rowIndex="1" GridPane.columnIndex="2" text="-">
+			<font>
+				<Font name="Times New Roman" size="24"/>
+			</font>
+		</Text>
+		<DatePicker GridPane.rowIndex="1" GridPane.columnIndex="3" fx:id="endDatePicker"/>
+		<ComboBox GridPane.rowIndex="1" GridPane.columnIndex="4" fx:id="endTimeComboBox"  minWidth="150" maxWidth="1.7976931348623157E308"/>
+		<TextArea GridPane.rowIndex="2" GridPane.columnSpan="5" fx:id="descriptionTextArea" promptText="Add Optional Description"/>
 		<ColorPicker GridPane.rowIndex="3" fx:id="backgroundColorPicker"/>
-		<HBox GridPane.rowIndex="4" alignment="BASELINE_RIGHT">
+		<HBox GridPane.rowIndex="4" GridPane.columnIndex="4" alignment="BASELINE_RIGHT">
 			<Button fx:id="deleteButton" text="Delete" onAction="#deleteEvent"/>
 			<Button fx:id="saveButton" text="Save" onAction="#saveEvent"/>
 		</HBox>

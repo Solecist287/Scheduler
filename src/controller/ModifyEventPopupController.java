@@ -37,7 +37,6 @@ public class ModifyEventPopupController {
 	private Event selectedEvent;
 	private List<Event> events;
 	private Stage primaryStage;
-	private int comboBoxWidth = 100;//specific, but perfectly fits time choices
 	private final int TIME_INCREMENT = 5;
 	
 	public void start(Stage primaryStage, List<Event> events, Event e) {
@@ -52,9 +51,6 @@ public class ModifyEventPopupController {
 			endTimeComboBox.getItems().add(formattedTime);
 			t = t.plusMinutes(TIME_INCREMENT);
 		} while(!t.equals(LocalTime.MIDNIGHT));
-		//set ComboBox widths
-		startTimeComboBox.setPrefWidth(comboBoxWidth);
-		endTimeComboBox.setPrefWidth(comboBoxWidth);
 		//set title
 		titleTextField.setText(e.getTitle());
 		//set date

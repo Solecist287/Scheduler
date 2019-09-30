@@ -35,7 +35,6 @@ public class AddEventPopupController {
 	
 	private List<Event> events;
 	private Stage primaryStage;
-	private int comboBoxWidth = 150;//specific, but perfectly fits time choices
 	private final int TIME_INCREMENT = 5;
 	public void start(Stage primaryStage, List<Event> events, LocalDate initDate) {
 		this.primaryStage = primaryStage;
@@ -49,8 +48,6 @@ public class AddEventPopupController {
 			t = t.plusMinutes(TIME_INCREMENT);
 		} while(!t.equals(LocalTime.MIDNIGHT));
 		//set ComboBox widths
-		startTimeComboBox.setPrefWidth(comboBoxWidth);
-		endTimeComboBox.setPrefWidth(comboBoxWidth);
 		//set default values
 		titleTextField.setText("");
 		//set datepicker values
@@ -59,8 +56,9 @@ public class AddEventPopupController {
 		endDatePicker.setValue(initDate);
 		endDatePicker.setShowWeekNumbers(false);
 		//set combobox values
-		startTimeComboBox.getSelectionModel().select(0);
-		endTimeComboBox.getSelectionModel().select(0);
+		startTimeComboBox.getSelectionModel().selectFirst();
+		endTimeComboBox.getSelectionModel().selectFirst();
+		startTimeComboBox.autosize();
 	}
 	
 	@FXML
