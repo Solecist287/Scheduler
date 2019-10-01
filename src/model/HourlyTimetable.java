@@ -19,12 +19,12 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import model.CalendarModel.Event;
 
 public abstract class HourlyTimetable extends Timetable {
 	static final int TIME_INCREMENT = 5;
 	static final int TIME_LABEL_WIDTH = 42;
 	static final int HEADER_HEIGHT = 40;//??
-	int dayNum;
 	ScrollPane hourlyGridContainer;
 	GridPane hourlyGrid, headerGrid;
 	
@@ -32,7 +32,6 @@ public abstract class HourlyTimetable extends Timetable {
 	List<Timeslot> timeslots;
 	public HourlyTimetable(Stage mainStage, List<Event> events, LocalDate initDate, int dayNum, Locale locale) {
 		super(mainStage, events, initDate, locale);
-		this.dayNum = dayNum;
 		//set timetable dimensions
 		rowNum = (24*60)/TIME_INCREMENT;//5 min intervals;
 		rowSize = TIME_INCREMENT; 
@@ -122,7 +121,7 @@ public abstract class HourlyTimetable extends Timetable {
 				l.setAlignment(Pos.CENTER);
 				l.setPrefWidth(colSize);
 				l.setPrefHeight(HEADER_HEIGHT);
-				l.setStyle(/*"-fx-border-width: 1;" + "-fx-border-color: black;" + */"-fx-background-color: white;");
+				l.setStyle("-fx-background-color: white;");
 				//add to list
 				headerLabels.add(l);
 				//add to grid

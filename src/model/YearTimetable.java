@@ -24,6 +24,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import model.CalendarModel.Event;
 
 public class YearTimetable extends Timetable {
 	ScrollPane yearGridContainer;

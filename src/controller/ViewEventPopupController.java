@@ -13,7 +13,7 @@ import javafx.scene.text.Text;
 import javafx.scene.text.TextFlow;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import model.Event;
+import model.CalendarModel.Event;
 import model.TimeUtilities;
 import model.Timetable;
 

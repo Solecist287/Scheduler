@@ -9,6 +9,7 @@ import java.util.Locale;
 import javafx.scene.Node;
 import javafx.scene.control.Label;
 import javafx.stage.Stage;
+import model.CalendarModel.Event;
 
 public class DayTimetable extends HourlyTimetable {
 	private Label headerLabel;

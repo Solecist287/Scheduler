@@ -20,6 +20,7 @@ import javafx.scene.layout.RowConstraints;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import model.CalendarModel.Event;
 
 public class MonthTimetable extends Timetable {
 	static final int HEADER_HEIGHT = 40;

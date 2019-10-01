@@ -15,6 +15,8 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+import model.CalendarModel.Event;
+
 public abstract class Timetable {
 	Stage mainStage;
 	public List<Event> events;

@@ -16,7 +16,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import model.Event;
+import model.CalendarModel.Event;
 import model.TimeUtilities;
 
 public class AddEventPopupController {
